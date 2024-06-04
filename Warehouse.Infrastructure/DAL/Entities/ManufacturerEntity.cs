@@ -6,7 +6,7 @@ public class ManufacturerEntity
 {
     public Guid Id { get; set; }
     public Guid AddressId { get; set; }
-    public AddressEntity Address { get; set; }
+    public AddressEntity AddressEntity { get; set; }
     public string Name { get; set; }
     public string Email { get; set; }
     public string PhoneNumber { get; set; }
@@ -16,7 +16,7 @@ public class ManufacturerEntity
         return new Manufacturer()
         {
             Id = Id,
-            Address = Address.ToAddress(),
+            Address = AddressEntity.ToAddress(),
             Name = Name,
             Email = Email,
             PhoneNumber = PhoneNumber

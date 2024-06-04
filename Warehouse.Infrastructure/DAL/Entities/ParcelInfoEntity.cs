@@ -5,7 +5,7 @@ namespace Warehouse.Infrastructure.DAL.Entities;
 public class ParcelInfoEntity
 {
     public Guid Id { get; set; }
-    public IReadOnlyCollection<ProductEntity> Products { get; set; }
+    public IReadOnlyCollection<ProductEntity> ProductEntities { get; set; }
     public double Length { get; set; }
     public double Width { get; set; }
     public double Height { get; set; }
@@ -16,7 +16,7 @@ public class ParcelInfoEntity
         return new ParcelInfo()
         {
             Id = Id,
-            Products = Products
+            Products = ProductEntities
                 .Select(p => p.ToProduct())
                 .ToList(),
             Length = Length,

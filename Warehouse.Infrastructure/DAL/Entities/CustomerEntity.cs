@@ -6,7 +6,7 @@ public class CustomerEntity
 {
     public Guid Id { get; set; }
     public Guid AddressId { get; set; }
-    public AddressEntity Address { get; set; }
+    public AddressEntity AddressEntity { get; set; }
     public string Name { get; set; }
     public string FullName { get; set; }
     public string Email { get; set; }
@@ -17,7 +17,7 @@ public class CustomerEntity
         return new Customer()
         {
             Id = Id,
-            Address = Address.ToAddress(),
+            Address = AddressEntity.ToAddress(),
             Name = Name,
             FullName = FullName,
             Email = Email,
