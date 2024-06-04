@@ -14,12 +14,12 @@ internal class ParcelInfoEntityConfiguration : IEntityTypeConfiguration<ParcelIn
 
     private static void SetPrimaryKey(EntityTypeBuilder<ParcelInfoEntity> builder)
     {
-        builder.HasKey(e => e.ProductId);
+        builder.HasKey(e => e.Id);
     }
 
     private static void SetTableName(EntityTypeBuilder<ParcelInfoEntity> builder)
     {
-        builder.ToTable("id");
+        builder.ToTable("parcel_info");
     }
 
     private static void ConfigureColumns(EntityTypeBuilder<ParcelInfoEntity> builder)
@@ -28,13 +28,13 @@ internal class ParcelInfoEntityConfiguration : IEntityTypeConfiguration<ParcelIn
             .HasColumnName("id")
             .IsRequired();
 
-        builder.Property(e => e.ProductId)
-            .HasColumnName("product_id")
-            .IsRequired();
+        //builder.Property(e => e.ProductId)
+        //    .HasColumnName("product_id")
+        //    .IsRequired();
 
-        builder.HasOne<ProductEntity>()
-            .WithMany()
-            .HasForeignKey(e => e.ProductId);
+        //builder.HasOne<ProductEntity>()
+        //    .WithMany()
+        //    .HasForeignKey(e => e.ProductId);
 
         builder.Property(e => e.Length)
             .HasColumnName("length")

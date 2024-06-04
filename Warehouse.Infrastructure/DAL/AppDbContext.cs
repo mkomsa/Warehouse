@@ -16,4 +16,5 @@ public class AppDbContext : DbContext
     public DbSet<ParcelInfoEntity> ParcelsInfo { get; set; }
     public DbSet<InvoiceEntity> Invoices { get; set; }
     public DbSet<OrderEntity> Orders { get; set; }
+    public DbSet<OrderProductEntity> OrdersProducts { get; set; }
 }

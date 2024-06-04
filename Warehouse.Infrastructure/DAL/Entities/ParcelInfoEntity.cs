@@ -3,7 +3,7 @@
 public class ParcelInfoEntity
 {
     public Guid Id { get; set; }
-    public Guid ProductId { get; set; }
+    public IReadOnlyCollection<ProductEntity> Products { get; set; }
     public double Length { get; set; }
     public double Width { get; set; }
     public double Height { get; set; }

@@ -52,5 +52,9 @@ internal class ManufacturerEntityConfiguration
             .HasColumnName("phone_number")
             .HasMaxLength(16)
             .IsRequired();
+
+        builder.HasOne<AddressEntity>()
+            .WithMany()
+            .HasForeignKey(e => e.AddressId);
     }
 }

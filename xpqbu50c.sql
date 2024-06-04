@@ -1,10 +1,10 @@
-﻿CREATE TABLE IF NOT EXISTS "__EFMigrationsHistory" (
-    "MigrationId" character varying(150) NOT NULL,
-    "ProductVersion" character varying(32) NOT NULL,
-    CONSTRAINT "PK___EFMigrationsHistory" PRIMARY KEY ("MigrationId")
-);
+﻿-- CREATE TABLE IF NOT EXISTS "__EFMigrationsHistory" (
+--     "MigrationId" character varying(150) NOT NULL,
+--     "ProductVersion" character varying(32) NOT NULL,
+--     CONSTRAINT "PK___EFMigrationsHistory" PRIMARY KEY ("MigrationId")
+-- );
 
-START TRANSACTION;
+-- START TRANSACTION;
 
 CREATE TABLE "Addresses" (
     "Id" uuid NOT NULL,
@@ -78,8 +78,8 @@ CREATE INDEX "IX_Orders_CustomerId" ON "Orders" ("CustomerId");
 
 CREATE INDEX "IX_Orders_ProductId" ON "Orders" ("ProductId");
 
-INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
-VALUES ('20240412151423_Init', '8.0.4');
+-- INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
+-- VALUES ('20240412151423_Init', '8.0.4');
 
-COMMIT;
+-- COMMIT;
 

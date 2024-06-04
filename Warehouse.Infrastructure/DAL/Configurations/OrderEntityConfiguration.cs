@@ -42,23 +42,29 @@ internal class OrderEntityConfiguration : IEntityTypeConfiguration<OrderEntity>
             .HasColumnName("address_id")
             .IsRequired();
 
-        builder.HasOne<AddressEntity>()
-            .WithMany()
-            .HasForeignKey(e => e.AddressId);
-
-        builder.Property(e => e.ProductId)
+        builder.Property(e => e.OrderProducts)
             .HasColumnName("product_id")
             .IsRequired();
 
-        builder.HasOne<ProductEntity>()
-            .WithMany()
-            .HasForeignKey(e => e.ProductId);
+        //builder.HasOne<ProductEntity>()
+        //    .WithMany()
+        //    .HasForeignKey(e => e.ProductId);
 
         builder.Property(e => e.InvoiceId)
             .HasColumnName("invoice_id")
             .IsRequired();
 
+        builder.HasOne<AddressEntity>()
+            .WithMany()
+            .HasForeignKey(e => e.AddressId);
+
+        builder.HasOne<CustomerEntity>()
+            .WithMany()
+            .HasForeignKey(e => e.CustomerId);
+
         builder.HasOne<InvoiceEntity>()
-            .WithOne();
+            .WithOne()
+            .HasForeignKey<OrderEntity>(e => e.InvoiceId);
+
     }
 }
