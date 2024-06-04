@@ -1,4 +1,6 @@
-﻿namespace Warehouse.Infrastructure.DAL.Entities;
+﻿using Warehouse.Core.Manufacturers.Models;
+
+namespace Warehouse.Infrastructure.DAL.Entities;
 
 public class ManufacturerEntity
 {
@@ -8,4 +10,16 @@ public class ManufacturerEntity
     public string Name { get; set; }
     public string Email { get; set; }
     public string PhoneNumber { get; set; }
+
+    public Manufacturer ToManufacturer()
+    {
+        return new Manufacturer()
+        {
+            Id = Id,
+            Address = Address.ToAddress(),
+            Name = Name,
+            Email = Email,
+            PhoneNumber = PhoneNumber
+        };
+    }
 }

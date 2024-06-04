@@ -1,4 +1,6 @@
-﻿namespace Warehouse.Infrastructure.DAL.Entities;
+﻿using Warehouse.Core.Invoices.Models;
+
+namespace Warehouse.Infrastructure.DAL.Entities;
 
 public class InvoiceEntity
 {
@@ -8,4 +10,17 @@ public class InvoiceEntity
     public double GrossValue { get; set; }
     public string Status { get; set; }
     public double VatRate { get; set; }
+
+    public Invoice ToInvoice()
+    {
+        return new Invoice()
+        {
+            Id = Id,
+            TransactionDate = TransactionDate,
+            NetValue = NetValue,
+            GrossValue = GrossValue,
+            Status = Status,
+            VatRate = VatRate
+        };
+    }
 }

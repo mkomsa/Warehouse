@@ -1,4 +1,6 @@
-﻿namespace Warehouse.Infrastructure.DAL.Entities;
+﻿using Warehouse.Core.Products.Models;
+
+namespace Warehouse.Infrastructure.DAL.Entities;
 
 public class ProductEntity
 {
@@ -10,4 +12,16 @@ public class ProductEntity
     public double Price { get; set; }
     public int AvailableAmount { get; set; }
     public ICollection<OrderProductEntity> OrderProducts { get; set; } = new List<OrderProductEntity>();
+
+    public Product ToProduct()
+    {
+        return new Product()
+        {
+            Id = Id,
+            ParcelInfo = ParcelInfo.ToParcelInfo(),
+            Manufacturer = Manufacturer.ToManufacturer(),
+            AvailableAmount = AvailableAmount,
+            Price = Price
+        };
+    }
 }
