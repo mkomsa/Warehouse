@@ -1,0 +1,63 @@
+﻿@page "/orders"
+@using Warehouse.Core.Orders.Models
+@using System.Text.Json
+@using System.Text.Json.Serialization
+@inject IHttpClientFactory ClientFactory
+@inject HttpClient http
+
+<h3>Orders</h3>
+
+@if (orders == null)
+{
+    <p><em>Loading...</em></p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Order ID</th>
+            <th>Customer Name</th>
+            <th>Email</th>
+            <th>Transaction Date</th>
+            <!-- Add more columns as needed -->
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var order in orders)
+        {
+            <tr>
+                <td>@order.Id</td>
+                <td>@order.Customer.Name</td>
+                <td>@order.Customer.Email</td>
+                <td>@order.Invoice.TransactionDate.ToShortDateString()</td>
+                <!-- Add more columns as needed -->
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+@code {
+    List<Order> orders = new List<Order>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            HttpClient httpClient = ClientFactory.CreateClient();
+            httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
+
+            orders = await http.GetFromJsonAsync<List<Order>>("https://localhost:7125/api/order")
+                ?? new List<Order>()
+                {
+                    new()
+                };
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+}

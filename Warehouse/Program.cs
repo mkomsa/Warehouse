@@ -13,8 +13,20 @@ builder.Services.AddSwaggerGen();
 builder.Services.RegisterCoreServices();
 builder.Services.RegisterInfrastructureServices(builder.Configuration);
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowBlazorClient",
+        builder =>
+        {
+            builder.AllowAnyOrigin()
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+        });
+});
+
 var app = builder.Build();
 
+app.UseCors("AllowBlazorClient");
 IServiceScope scope = app.Services.CreateScope();
 AppDbContextSeeder seeder = scope.ServiceProvider.GetRequiredService<AppDbContextSeeder>();
 
@@ -28,7 +40,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-
 app.UseAuthorization();
 
 app.MapControllers();
