@@ -7,13 +7,12 @@ public class OrderEntity
 {
     public Guid Id { get; set; }
     public Guid CustomerEntityId { get; set; }
-    public CustomerEntity CustomerEntity { get; set; }
+    public CustomerEntity CustomerEntity { get; set; } = new();
     public Guid AddressEntityId { get; set; }
-    public AddressEntity AddressEntity { get; set; }
+    public AddressEntity AddressEntity { get; set; } = new();
     public ICollection<OrderProductEntity> OrderProducts { get; set; } = new List<OrderProductEntity>();
-    public IReadOnlyCollection<ProductEntity> ProductEntities { get; set; }
     public Guid InvoiceEntityId { get; set; }
-    public InvoiceEntity InvoiceEntity { get; set; }
+    public InvoiceEntity InvoiceEntity { get; set; } = new();
 
     public Order ToOrder()
     {
@@ -25,11 +24,11 @@ public class OrderEntity
             Invoice = InvoiceEntity.ToInvoice(),
             Products = OrderProducts.Select(op => new Product()
             {
-                Id = op.ProductEntity.Id,
+                Id = op.ProductEntity?.Id ?? Guid.Empty,
                 Manufacturer = op.ProductEntity.ManufacturerEntity.ToManufacturer(),
                 ParcelInfo = op.ProductEntity.ParcelInfoEntity.ToParcelInfo(),
-                AvailableAmount = op.ProductEntity.AvailableAmount,
-                Price = op.ProductEntity.Price,
+                AvailableAmount = op.ProductEntity?.AvailableAmount ?? 0,
+                Price = op.ProductEntity?.Price ?? 0,
             }).ToList()
         };
     }

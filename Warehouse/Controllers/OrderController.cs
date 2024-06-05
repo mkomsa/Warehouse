@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Warehouse.Core.Orders.Models;
+using Warehouse.Core.Orders.Queries.GetOrderById;
 using Warehouse.Core.Orders.Queries.GetOrders;
 
 namespace Warehouse.Api.Controllers;
@@ -22,11 +23,11 @@ public class OrderController(IMediator mediator) : ControllerBase
     }
 
     [HttpGet("{id}")]
-    public async Task<IActionResult> GetOrders([FromRoute] Guid id)
+    public async Task<IActionResult> GetOrderById([FromRoute] Guid id)
     {
-        GetOrdersQuery query = new GetOrdersQuery();
+        GetOrderByIdQuery query = new GetOrderByIdQuery(id);
 
-        IReadOnlyCollection<Order> result = await _mediator.Send(query);
+        Order result = await _mediator.Send(query);
 
         return Ok(result);
     }

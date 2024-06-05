@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using Warehouse.Core.Orders.Models;
 using Warehouse.Core.Orders.Repositories;
 using Warehouse.Infrastructure.DAL.Entities;
@@ -14,14 +15,25 @@ internal class OrderRepository(AppDbContext dbContext) : IOrderRepository
     {
         try
         {
-            Order[] orderEntities = await _dbContext.Orders.Include(e => e.CustomerEntity)
-                .Include(e => e.AddressEntity)
-                .Include(e => e.OrderProducts)
+            IIncludableQueryable<OrderEntity, ParcelInfoEntity> baseQuery = _dbContext.Orders
+                .Include(o => o.CustomerEntity)
+                    .ThenInclude(ce => ce.AddressEntity)
+                .Include(o => o.AddressEntity)
+                .Include(o => o.InvoiceEntity)
+                .Include(o => o.OrderProducts)
                     .ThenInclude(op => op.ProductEntity)
-                .Select(e => e.ToOrder())
-                .ToArrayAsync();
+                        .ThenInclude(p => p.ManufacturerEntity)
+                            .ThenInclude(m => m.AddressEntity)
+                .Include(o => o.OrderProducts)
+                    .ThenInclude(op => op.ProductEntity)
+                        .ThenInclude(p => p.ParcelInfoEntity);
 
-            if (!orderEntities.Any())
+
+            List<Order> orders = await baseQuery
+                .Select(e => e.ToOrder())
+                .ToListAsync();
+
+            if (!orders.Any())
             {
                 return new List<Order>()
                 {
@@ -29,7 +41,7 @@ internal class OrderRepository(AppDbContext dbContext) : IOrderRepository
                 };
             }
 
-            return orderEntities;
+            return orders;
         }
         catch (Exception ex)
         {
@@ -41,15 +53,28 @@ internal class OrderRepository(AppDbContext dbContext) : IOrderRepository
     {
         try
         {
-            OrderEntity? orderEntity = await dbContext.Orders.FirstOrDefaultAsync(e => e.Id == id);
+            OrderEntity? orderEntity = await _dbContext.Orders
+                .Include(o => o.CustomerEntity)
+                    .ThenInclude(ce => ce.AddressEntity)
+                .Include(o => o.AddressEntity)
+                .Include(o => o.InvoiceEntity)
+                .Include(o => o.OrderProducts)
+                    .ThenInclude(op => op.ProductEntity)
+                        .ThenInclude(p => p.ManufacturerEntity)
+                        .ThenInclude(m => m.AddressEntity)
+                .Include(o => o.OrderProducts)
+                    .ThenInclude(op => op.ProductEntity)
+                        .ThenInclude(p => p.ParcelInfoEntity)
+                .FirstOrDefaultAsync(o => o.Id == id);
 
             if (orderEntity == null)
             {
                 return new Order();
             }
 
-            return orderEntity
-                .ToOrder();
+            return orderEntity.ToOrder();
+
+
         }
         catch (Exception ex)
         {
