@@ -7,6 +7,44 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Seeder\SeedData\Addresses.sql" />
+    <None Remove="Seeder\SeedData\Customers.sql" />
+    <None Remove="Seeder\SeedData\Invoices.sql" />
+    <None Remove="Seeder\SeedData\Manufacturers.sql" />
+    <None Remove="Seeder\SeedData\Orders.sql" />
+    <None Remove="Seeder\SeedData\OrdersProduct.sql" />
+    <None Remove="Seeder\SeedData\ParcelsInfo.sql" />
+    <None Remove="Seeder\SeedData\Products.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Seeder\SeedData\Addresses.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Seeder\SeedData\Customers.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Seeder\SeedData\Invoices.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Seeder\SeedData\Manufacturers.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Seeder\SeedData\Orders.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Seeder\SeedData\OrdersProduct.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Seeder\SeedData\ParcelsInfo.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Seeder\SeedData\Products.sql">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.4" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.4">
       <PrivateAssets>all</PrivateAssets>

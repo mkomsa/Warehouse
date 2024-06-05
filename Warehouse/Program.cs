@@ -1,5 +1,6 @@
 using Warehouse.Core;
 using Warehouse.Infrastructure;
+using Warehouse.Infrastructure.Seeder;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +14,11 @@ builder.Services.RegisterCoreServices();
 builder.Services.RegisterInfrastructureServices(builder.Configuration);
 
 var app = builder.Build();
+
+IServiceScope scope = app.Services.CreateScope();
+AppDbContextSeeder seeder = scope.ServiceProvider.GetRequiredService<AppDbContextSeeder>();
+
+seeder.SeedDatabase();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

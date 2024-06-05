@@ -6,6 +6,7 @@ using Warehouse.Core.Addresses.Repositories;
 using Warehouse.Core.Orders.Repositories;
 using Warehouse.Infrastructure.DAL;
 using Warehouse.Infrastructure.DAL.Repositories;
+using Warehouse.Infrastructure.Seeder;
 
 namespace Warehouse.Infrastructure;
 
@@ -17,6 +18,7 @@ public static class ServiceExtension
 
         services.AddScoped<IAddressRepository, AddressRepository>();
         services.AddScoped<IOrderRepository, OrderRepository>();
+        services.AddScoped<AppDbContextSeeder, AppDbContextSeeder>();
     }
 
     private static void AddDatabase(this IServiceCollection services, IConfiguration configuration)
