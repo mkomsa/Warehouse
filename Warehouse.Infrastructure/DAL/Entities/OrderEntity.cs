@@ -6,13 +6,13 @@ namespace Warehouse.Infrastructure.DAL.Entities;
 public class OrderEntity
 {
     public Guid Id { get; set; }
-    public Guid CustomerId { get; set; }
+    public Guid CustomerEntityId { get; set; }
     public CustomerEntity CustomerEntity { get; set; }
-    public Guid AddressId { get; set; }
+    public Guid AddressEntityId { get; set; }
     public AddressEntity AddressEntity { get; set; }
     public ICollection<OrderProductEntity> OrderProducts { get; set; } = new List<OrderProductEntity>();
     public IReadOnlyCollection<ProductEntity> ProductEntities { get; set; }
-    public Guid InvoiceId { get; set; }
+    public Guid InvoiceEntityId { get; set; }
     public InvoiceEntity InvoiceEntity { get; set; }
 
     public Order ToOrder()

@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
 using Warehouse.Core.Addresses.Repositories;
+using Warehouse.Core.Orders.Repositories;
 using Warehouse.Infrastructure.DAL;
 using Warehouse.Infrastructure.DAL.Repositories;
 
@@ -15,6 +16,7 @@ public static class ServiceExtension
         services.AddDatabase(configuration);
 
         services.AddScoped<IAddressRepository, AddressRepository>();
+        services.AddScoped<IOrderRepository, OrderRepository>();
     }
 
     private static void AddDatabase(this IServiceCollection services, IConfiguration configuration)

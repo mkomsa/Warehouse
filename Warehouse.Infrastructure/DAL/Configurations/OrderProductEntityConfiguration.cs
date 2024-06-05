@@ -19,7 +19,7 @@ internal class OrderProductEntityConfiguration : IEntityTypeConfiguration<OrderP
 
     public void SetPrimaryKey(EntityTypeBuilder<OrderProductEntity> builder)
     {
-        builder.HasKey(e => new { e.OrderId, e.ProductId });
+        builder.HasKey(e => new { e.OrderEntityId, e.ProductEntityId });
     }
 
     public void ConfigureColumns(EntityTypeBuilder<OrderProductEntity> builder)
@@ -29,16 +29,16 @@ internal class OrderProductEntityConfiguration : IEntityTypeConfiguration<OrderP
             .ValueGeneratedOnAdd()
             .IsRequired();
 
-        builder.Property(e => e.OrderId)
+        builder.Property(e => e.OrderEntityId)
             .HasColumnName("order_id")
             .IsRequired();
 
-        builder.Property(e => e.ProductId)
+        builder.Property(e => e.ProductEntityId)
             .HasColumnName("product_id")
             .IsRequired();
 
-        builder.HasOne(op => op.Order)
+        builder.HasOne(op => op.OrderEntity)
             .WithMany(o => o.OrderProducts)
-            .HasForeignKey(op => op.OrderId);
+            .HasForeignKey(op => op.OrderEntityId);
     }
 }

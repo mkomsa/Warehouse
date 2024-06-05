@@ -8,19 +8,18 @@ internal class AddressEntityConfiguration : IEntityTypeConfiguration<AddressEnti
 {
     public void Configure(EntityTypeBuilder<AddressEntity> builder)
     {
-        SetPrimaryKey(builder);
         SetTableName(builder);
+        SetPrimaryKey(builder);
         ConfigureColumns(builder);
+    }
+    private static void SetTableName(EntityTypeBuilder<AddressEntity> builder)
+    {
+        builder.ToTable("address");
     }
 
     private static void SetPrimaryKey(EntityTypeBuilder<AddressEntity> builder)
     {
         builder.HasKey(e => e.Id);
-    }
-
-    private static void SetTableName(EntityTypeBuilder<AddressEntity> builder)
-    {
-        builder.ToTable("address");
     }
 
     private static void ConfigureColumns(EntityTypeBuilder<AddressEntity> builder)

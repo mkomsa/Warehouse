@@ -8,19 +8,19 @@ internal class ManufacturerEntityConfiguration
 {
     public void Configure(EntityTypeBuilder<ManufacturerEntity> builder)
     {
-        SetPrimaryKey(builder);
         SetTableName(builder);
+        SetPrimaryKey(builder);
         ConfigureColumns(builder);
-    }
-
-    private static void SetPrimaryKey(EntityTypeBuilder<ManufacturerEntity> builder)
-    {
-        builder.HasKey(e => e.Id);
     }
 
     private static void SetTableName(EntityTypeBuilder<ManufacturerEntity> builder)
     {
         builder.ToTable("manufacturer");
+    }
+
+    private static void SetPrimaryKey(EntityTypeBuilder<ManufacturerEntity> builder)
+    {
+        builder.HasKey(e => e.Id);
     }
 
     private static void ConfigureColumns(EntityTypeBuilder<ManufacturerEntity> builder)
@@ -30,13 +30,13 @@ internal class ManufacturerEntityConfiguration
             .ValueGeneratedOnAdd()
             .IsRequired();
 
-        builder.Property(e => e.AddressId)
+        builder.Property(e => e.AddressEntityId)
             .HasColumnName("address_id")
             .IsRequired();
 
         builder.HasOne<AddressEntity>()
             .WithMany()
-            .HasForeignKey(e => e.AddressId);
+            .HasForeignKey(e => e.AddressEntityId);
 
         builder.Property(e => e.Name)
             .HasColumnName("name")
@@ -55,6 +55,6 @@ internal class ManufacturerEntityConfiguration
 
         builder.HasOne<AddressEntity>()
             .WithMany()
-            .HasForeignKey(e => e.AddressId);
+            .HasForeignKey(e => e.AddressEntityId);
     }
 }

@@ -5,7 +5,7 @@ namespace Warehouse.Infrastructure.DAL.Entities;
 public class ManufacturerEntity
 {
     public Guid Id { get; set; }
-    public Guid AddressId { get; set; }
+    public Guid AddressEntityId { get; set; }
     public AddressEntity AddressEntity { get; set; }
     public string Name { get; set; }
     public string Email { get; set; }

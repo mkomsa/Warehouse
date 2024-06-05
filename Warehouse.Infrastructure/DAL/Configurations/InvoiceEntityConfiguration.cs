@@ -8,19 +8,19 @@ internal class InvoiceEntityConfiguration : IEntityTypeConfiguration<InvoiceEnti
 {
     public void Configure(EntityTypeBuilder<InvoiceEntity> builder)
     {
-        SetPrimaryKey(builder);
         SetTableName(builder);
+        SetPrimaryKey(builder);
         ConfigureColumns(builder);
-    }
-
-    private static void SetPrimaryKey(EntityTypeBuilder<InvoiceEntity> builder)
-    {
-        builder.HasKey(e => e.Id);
     }
 
     private static void SetTableName(EntityTypeBuilder<InvoiceEntity> builder)
     {
         builder.ToTable("invoice");
+    }
+
+    private static void SetPrimaryKey(EntityTypeBuilder<InvoiceEntity> builder)
+    {
+        builder.HasKey(e => e.Id);
     }
 
     private static void ConfigureColumns(EntityTypeBuilder<InvoiceEntity> builder)

@@ -1,11 +1,12 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Warehouse.Core.Orders.Models;
+using Warehouse.Core.Orders.Repositories;
 using Warehouse.Infrastructure.DAL.Entities;
 using Warehouse.Infrastructure.DAL.Exceptions;
 
 namespace Warehouse.Infrastructure.DAL.Repositories;
 
-internal class OrdersRepository(AppDbContext dbContext)
+internal class OrderRepository(AppDbContext dbContext) : IOrderRepository
 {
     private readonly AppDbContext _dbContext = dbContext;
 

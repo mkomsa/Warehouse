@@ -7,19 +7,18 @@ internal class ParcelInfoEntityConfiguration : IEntityTypeConfiguration<ParcelIn
 {
     public void Configure(EntityTypeBuilder<ParcelInfoEntity> builder)
     {
-        SetPrimaryKey(builder);
         SetTableName(builder);
+        SetPrimaryKey(builder);
         ConfigureColumns(builder);
+    }
+    private static void SetTableName(EntityTypeBuilder<ParcelInfoEntity> builder)
+    {
+        builder.ToTable("parcel_info");
     }
 
     private static void SetPrimaryKey(EntityTypeBuilder<ParcelInfoEntity> builder)
     {
         builder.HasKey(e => e.Id);
-    }
-
-    private static void SetTableName(EntityTypeBuilder<ParcelInfoEntity> builder)
-    {
-        builder.ToTable("parcel_info");
     }
 
     private static void ConfigureColumns(EntityTypeBuilder<ParcelInfoEntity> builder)

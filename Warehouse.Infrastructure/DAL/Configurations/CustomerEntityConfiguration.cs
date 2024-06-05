@@ -8,19 +8,19 @@ internal class CustomerEntityConfiguration : IEntityTypeConfiguration<CustomerEn
 {
     public void Configure(EntityTypeBuilder<CustomerEntity> builder)
     {
-        SetPrimaryKey(builder);
         SetTableName(builder);
+        SetPrimaryKey(builder);
         ConfigureColumns(builder);
-    }
-
-    private static void SetPrimaryKey(EntityTypeBuilder<CustomerEntity> builder)
-    {
-        builder.HasKey(e => e.Id);
     }
 
     private static void SetTableName(EntityTypeBuilder<CustomerEntity> builder)
     {
         builder.ToTable("customer");
+    }
+
+    private static void SetPrimaryKey(EntityTypeBuilder<CustomerEntity> builder)
+    {
+        builder.HasKey(e => e.Id);
     }
 
     private static void ConfigureColumns(EntityTypeBuilder<CustomerEntity> builder)
@@ -30,13 +30,13 @@ internal class CustomerEntityConfiguration : IEntityTypeConfiguration<CustomerEn
             .ValueGeneratedOnAdd()
             .IsRequired();
 
-        builder.Property(e => e.AddressId)
+        builder.Property(e => e.AddressEntityId)
             .HasColumnName("address_id")
             .IsRequired();
 
         builder.HasOne<AddressEntity>()
             .WithMany()
-            .HasForeignKey(e => e.AddressId);
+            .HasForeignKey(e => e.AddressEntityId);
 
         builder.Property(e => e.Name)
             .HasColumnName("name");
@@ -58,6 +58,6 @@ internal class CustomerEntityConfiguration : IEntityTypeConfiguration<CustomerEn
 
         builder.HasOne<AddressEntity>()
             .WithMany()
-            .HasForeignKey(e => e.AddressId);
+            .HasForeignKey(e => e.AddressEntityId);
     }
 }

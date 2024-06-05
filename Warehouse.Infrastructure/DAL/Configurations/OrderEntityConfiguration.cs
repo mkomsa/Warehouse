@@ -8,19 +8,19 @@ internal class OrderEntityConfiguration : IEntityTypeConfiguration<OrderEntity>
 {
     public void Configure(EntityTypeBuilder<OrderEntity> builder)
     {
-        SetPrimaryKey(builder);
         SetTableName(builder);
+        SetPrimaryKey(builder);
         ConfigureColumns(builder);
-    }
-
-    private static void SetPrimaryKey(EntityTypeBuilder<OrderEntity> builder)
-    {
-        builder.HasKey(e => e.Id);
     }
 
     private static void SetTableName(EntityTypeBuilder<OrderEntity> builder)
     {
         builder.ToTable("order");
+    }
+
+    private static void SetPrimaryKey(EntityTypeBuilder<OrderEntity> builder)
+    {
+        builder.HasKey(e => e.Id);
     }
 
     private static void ConfigureColumns(EntityTypeBuilder<OrderEntity> builder)
@@ -30,15 +30,15 @@ internal class OrderEntityConfiguration : IEntityTypeConfiguration<OrderEntity>
             .ValueGeneratedOnAdd()
             .IsRequired();
 
-        builder.Property(e => e.CustomerId)
+        builder.Property(e => e.CustomerEntityId)
             .HasColumnName("customer_id")
             .IsRequired();
 
         builder.HasOne<CustomerEntity>()
             .WithMany()
-            .HasForeignKey(e => e.CustomerId);
+            .HasForeignKey(e => e.CustomerEntityId);
 
-        builder.Property(e => e.AddressId)
+        builder.Property(e => e.AddressEntityId)
             .HasColumnName("address_id")
             .IsRequired();
 
@@ -50,21 +50,21 @@ internal class OrderEntityConfiguration : IEntityTypeConfiguration<OrderEntity>
         //    .WithMany()
         //    .HasForeignKey(e => e.ProductId);
 
-        builder.Property(e => e.InvoiceId)
+        builder.Property(e => e.InvoiceEntityId)
             .HasColumnName("invoice_id")
             .IsRequired();
 
         builder.HasOne<AddressEntity>()
             .WithMany()
-            .HasForeignKey(e => e.AddressId);
+            .HasForeignKey(e => e.AddressEntityId);
 
         builder.HasOne<CustomerEntity>()
             .WithMany()
-            .HasForeignKey(e => e.CustomerId);
+            .HasForeignKey(e => e.CustomerEntityId);
 
         builder.HasOne<InvoiceEntity>()
             .WithOne()
-            .HasForeignKey<OrderEntity>(e => e.InvoiceId);
+            .HasForeignKey<OrderEntity>(e => e.InvoiceEntityId);
 
     }
 }

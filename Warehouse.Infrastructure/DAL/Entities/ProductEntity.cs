@@ -5,9 +5,9 @@ namespace Warehouse.Infrastructure.DAL.Entities;
 public class ProductEntity
 {
     public Guid Id { get; set; }
-    public Guid ParcelInfoId { get; set; }
+    public Guid ParcelInfoEntityId { get; set; }
     public ParcelInfoEntity ParcelInfoEntity { get; set; }
-    public Guid ManufacturerId { get; set; }
+    public Guid ManufacturerEntityId { get; set; }
     public ManufacturerEntity ManufacturerEntity { get; set; }
     public double Price { get; set; }
     public int AvailableAmount { get; set; }
