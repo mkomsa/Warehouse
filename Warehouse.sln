@@ -12,7 +12,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Warehouse.Infrastructure", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Warehouse.Core", "Warehouse.Core\Warehouse.Core.csproj", "{F4E76749-72EE-481C-BB11-C768A84125BF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Warehouse.Web", "Warehouse.Web\Warehouse.Web.csproj", "{A73934D5-8745-444B-8F38-8574A7DB7F76}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Warehouse.Web", "Warehouse.Web\Warehouse.Web.csproj", "{A73934D5-8745-444B-8F38-8574A7DB7F76}"
 	ProjectSection(ProjectDependencies) = postProject
 		{BC8F9E73-A3D3-48EA-9139-3B3DF9D3BA9D} = {BC8F9E73-A3D3-48EA-9139-3B3DF9D3BA9D}
 		{F4E76749-72EE-481C-BB11-C768A84125BF} = {F4E76749-72EE-481C-BB11-C768A84125BF}

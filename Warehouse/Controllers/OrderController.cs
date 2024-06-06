@@ -1,5 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Warehouse.Core.Orders.Commands.Create;
 using Warehouse.Core.Orders.Models;
 using Warehouse.Core.Orders.Queries.GetOrderById;
 using Warehouse.Core.Orders.Queries.GetOrders;
@@ -28,6 +29,20 @@ public class OrderController(IMediator mediator) : ControllerBase
         GetOrderByIdQuery query = new GetOrderByIdQuery(id);
 
         Order result = await _mediator.Send(query);
+
+        return Ok(result);
+    }
+
+
+    [HttpPost]
+    public async Task<IActionResult> Create([FromBody] Order order)
+    {
+        CreateOrderCommand command = new CreateOrderCommand()
+        {
+            Order = order
+        };
+
+        Guid result = await _mediator.Send(command);
 
         return Ok(result);
     }

@@ -81,4 +81,21 @@ internal class OrderRepository(AppDbContext dbContext) : IOrderRepository
             throw new DbOperationException("GetAddresses failed.", ex);
         }
     }
+
+    public async Task<Guid> CreateOrderAsync(Order order)
+    {
+        try
+        {
+            OrderEntity orderEntity = OrderEntity.FromOrder(order);
+            await _dbContext.Orders.AddAsync(orderEntity);
+            await _dbContext.SaveChangesAsync();
+
+            return orderEntity.Id;
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
 }

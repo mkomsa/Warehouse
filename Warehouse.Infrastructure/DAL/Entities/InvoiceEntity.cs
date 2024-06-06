@@ -11,6 +11,18 @@ public class InvoiceEntity
     public string Status { get; set; }
     public double VatRate { get; set; }
 
+    public static InvoiceEntity FromInvoice(Invoice invoice)
+    {
+        return new InvoiceEntity()
+        {
+            Id = invoice.Id,
+            TransactionDate = invoice.TransactionDate,
+            NetValue = invoice.NetValue,
+            GrossValue = invoice.GrossValue,
+            Status = invoice.Status,
+            VatRate = invoice.VatRate
+        };
+    }
     public Invoice ToInvoice()
     {
         return new Invoice()

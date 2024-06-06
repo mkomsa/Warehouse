@@ -14,6 +14,42 @@ public class OrderEntity
     public Guid InvoiceEntityId { get; set; }
     public InvoiceEntity InvoiceEntity { get; set; } = new();
 
+    public static OrderEntity FromOrder(Order order)
+    {
+        return new OrderEntity()
+        {
+            Id = order.Id,
+            CustomerEntityId = order.Customer.Id,
+            AddressEntityId = order.Address.Id,
+            CustomerEntity = CustomerEntity.FromCustomer(order.Customer),
+            AddressEntity = AddressEntity.FromAddress(order.Address),
+            OrderProducts = ToOrderProducts(order),
+            InvoiceEntityId = order.Invoice.Id,
+            InvoiceEntity = InvoiceEntity.FromInvoice(order.Invoice)
+        };
+    }
+
+    private static ICollection<OrderProductEntity> ToOrderProducts(Order order)
+    {
+        List<OrderProductEntity> orderProducts = new List<OrderProductEntity>()
+        {
+        };
+
+        foreach (var product in order.Products)
+        {
+            OrderProductEntity newProduct = new OrderProductEntity()
+            {
+                Id = Guid.NewGuid(),
+                OrderEntityId = order.Id,
+                ProductEntityId = product.Id,
+            };
+
+            orderProducts.Add(newProduct);
+        }
+
+        return orderProducts;
+    }
+
     public Order ToOrder()
     {
         return new Order()

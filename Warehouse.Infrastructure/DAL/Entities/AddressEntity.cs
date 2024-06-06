@@ -9,6 +9,17 @@ public class AddressEntity
     public string Street { get; set; }
     public string Apartment { get; set; }
 
+    public static AddressEntity FromAddress(Address address)
+    {
+        return new AddressEntity()
+        {
+            Id = address.Id,
+            PostalCode = address.PostalCode,
+            Street = address.Street,
+            Apartment = address.Apartment,
+        };
+    }
+
     public Address ToAddress()
     {
         return new Address()
