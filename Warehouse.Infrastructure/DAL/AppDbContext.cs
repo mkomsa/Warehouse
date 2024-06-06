@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 using Warehouse.Infrastructure.DAL.Entities;
+using Warehouse.Infrastructure.DAL.Views;
 
 namespace Warehouse.Infrastructure.DAL;
 
@@ -17,4 +19,11 @@ public class AppDbContext : DbContext
     public DbSet<InvoiceEntity> Invoices { get; set; }
     public DbSet<OrderEntity> Orders { get; set; }
     public DbSet<OrderProductEntity> OrdersProducts { get; set; }
+    public DbSet<OrderView> OrderViews { get; set; }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+        modelBuilder.Entity<OrderView>().ToView("OrderView").HasKey(v => v.Id);
+    }
 }

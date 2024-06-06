@@ -1,11 +1,13 @@
-﻿using Warehouse.Core.Customers.Models;
+﻿using System.ComponentModel.DataAnnotations;
+using Warehouse.Core.Customers.Models;
 
 namespace Warehouse.Infrastructure.DAL.Entities;
 
 public class CustomerEntity
 {
-    public Guid Id { get; set; }
-    public Guid AddressEntityId { get; set; }
+    [Key]
+    public Guid CustomerId { get; set; }
+    public Guid AddressId { get; set; }
     public AddressEntity AddressEntity { get; set; }
     public string Name { get; set; }
     public string FullName { get; set; }
@@ -16,8 +18,8 @@ public class CustomerEntity
     {
         return new CustomerEntity()
         {
-            Id = customer.Id,
-            AddressEntityId = customer.AddressId,
+            CustomerId = customer.Id,
+            AddressId = customer.AddressId,
             AddressEntity = AddressEntity.FromAddress(customer.Address),
             Name = customer.Name,
             FullName = customer.FullName,
@@ -30,7 +32,7 @@ public class CustomerEntity
     {
         return new Customer()
         {
-            Id = Id,
+            Id = CustomerId,
             Address = AddressEntity.ToAddress(),
             Name = Name,
             FullName = FullName,

@@ -1,13 +1,15 @@
-﻿using Warehouse.Core.Products.Models;
+﻿using System.ComponentModel.DataAnnotations;
+using Warehouse.Core.Products.Models;
 
 namespace Warehouse.Infrastructure.DAL.Entities;
 
 public class ProductEntity
 {
-    public Guid Id { get; set; }
-    public Guid ParcelInfoEntityId { get; set; }
+    [Key]
+    public Guid ProductId { get; set; }
+    public Guid ParcelInfoId { get; set; }
     public ParcelInfoEntity ParcelInfoEntity { get; set; }
-    public Guid ManufacturerEntityId { get; set; }
+    public Guid ManufacturerId { get; set; }
     public ManufacturerEntity ManufacturerEntity { get; set; }
     public double Price { get; set; }
     public int AvailableAmount { get; set; }
@@ -17,7 +19,7 @@ public class ProductEntity
     {
         return new Product()
         {
-            Id = Id,
+            Id = ProductId,
             ParcelInfo = ParcelInfoEntity.ToParcelInfo(),
             Manufacturer = ManufacturerEntity.ToManufacturer(),
             AvailableAmount = AvailableAmount,

@@ -38,7 +38,7 @@ internal class AddressRepository(AppDbContext dbContext) : IAddressRepository
     {
         try
         {
-            AddressEntity? addressEntity = await dbContext.Addresses.FirstOrDefaultAsync(e => e.Id == id);
+            AddressEntity? addressEntity = await dbContext.Addresses.FirstOrDefaultAsync(e => e.AddressId == id);
 
             if (addressEntity == null)
             {

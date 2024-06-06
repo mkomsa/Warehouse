@@ -1,10 +1,12 @@
-﻿using Warehouse.Core.ParcelsInfos.Models;
+﻿using System.ComponentModel.DataAnnotations;
+using Warehouse.Core.ParcelsInfos.Models;
 
 namespace Warehouse.Infrastructure.DAL.Entities;
 
 public class ParcelInfoEntity
 {
-    public Guid Id { get; set; }
+    [Key]
+    public Guid ParcelInfoId { get; set; }
     public double Length { get; set; }
     public double Width { get; set; }
     public double Height { get; set; }
@@ -14,7 +16,7 @@ public class ParcelInfoEntity
     {
         return new ParcelInfo()
         {
-            Id = Id,
+            Id = ParcelInfoId,
             Length = Length,
             Width = Width,
             Height = Height,

@@ -20,23 +20,24 @@ internal class CustomerEntityConfiguration : IEntityTypeConfiguration<CustomerEn
 
     private static void SetPrimaryKey(EntityTypeBuilder<CustomerEntity> builder)
     {
-        builder.HasKey(e => e.Id);
+        builder.HasKey(e => e.CustomerId);
     }
 
     private static void ConfigureColumns(EntityTypeBuilder<CustomerEntity> builder)
     {
-        builder.Property(e => e.Id)
-            .HasColumnName("id")
+
+        builder.HasOne(e => e.AddressEntity)
+            .WithMany()
+            .HasForeignKey(e => e.AddressId);
+
+        builder.Property(e => e.CustomerId)
+            .HasColumnName("customer_id")
             .ValueGeneratedOnAdd()
             .IsRequired();
 
-        builder.Property(e => e.AddressEntityId)
+        builder.Property(e => e.AddressId)
             .HasColumnName("address_id")
             .IsRequired();
-
-        builder.HasOne<AddressEntity>()
-            .WithMany()
-            .HasForeignKey(e => e.AddressEntityId);
 
         builder.Property(e => e.Name)
             .HasColumnName("name");
@@ -55,9 +56,5 @@ internal class CustomerEntityConfiguration : IEntityTypeConfiguration<CustomerEn
             .HasColumnName("phone_number")
             .HasMaxLength(16)
             .IsRequired();
-
-        builder.HasOne<AddressEntity>()
-            .WithMany()
-            .HasForeignKey(e => e.AddressEntityId);
     }
 }

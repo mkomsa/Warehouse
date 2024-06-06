@@ -4,7 +4,7 @@ using Warehouse.Infrastructure.DAL.Entities;
 
 namespace Warehouse.Infrastructure.DAL.Configurations;
 
-internal class ManufacturerEntityConfiguration
+internal class ManufacturerEntityConfiguration : IEntityTypeConfiguration<ManufacturerEntity>
 {
     public void Configure(EntityTypeBuilder<ManufacturerEntity> builder)
     {
@@ -20,23 +20,24 @@ internal class ManufacturerEntityConfiguration
 
     private static void SetPrimaryKey(EntityTypeBuilder<ManufacturerEntity> builder)
     {
-        builder.HasKey(e => e.Id);
+        builder.HasKey(e => e.ManufacturerId);
     }
 
     private static void ConfigureColumns(EntityTypeBuilder<ManufacturerEntity> builder)
     {
-        builder.Property(e => e.Id)
-            .HasColumnName("id")
+
+        builder.HasOne(e => e.AddressEntity)
+            .WithMany()
+            .HasForeignKey(e => e.AddressId);
+
+        builder.Property(e => e.ManufacturerId)
+            .HasColumnName("manufacturer_id")
             .ValueGeneratedOnAdd()
             .IsRequired();
 
-        builder.Property(e => e.AddressEntityId)
+        builder.Property(e => e.AddressId)
             .HasColumnName("address_id")
             .IsRequired();
-
-        builder.HasOne<AddressEntity>()
-            .WithMany()
-            .HasForeignKey(e => e.AddressEntityId);
 
         builder.Property(e => e.Name)
             .HasColumnName("name")
@@ -52,9 +53,5 @@ internal class ManufacturerEntityConfiguration
             .HasColumnName("phone_number")
             .HasMaxLength(16)
             .IsRequired();
-
-        builder.HasOne<AddressEntity>()
-            .WithMany()
-            .HasForeignKey(e => e.AddressEntityId);
     }
 }

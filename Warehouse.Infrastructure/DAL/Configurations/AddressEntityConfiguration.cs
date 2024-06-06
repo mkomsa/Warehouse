@@ -19,13 +19,13 @@ internal class AddressEntityConfiguration : IEntityTypeConfiguration<AddressEnti
 
     private static void SetPrimaryKey(EntityTypeBuilder<AddressEntity> builder)
     {
-        builder.HasKey(e => e.Id);
+        builder.HasKey(e => e.AddressId);
     }
 
     private static void ConfigureColumns(EntityTypeBuilder<AddressEntity> builder)
     {
-        builder.Property(e => e.Id)
-            .HasColumnName("id")
+        builder.Property(e => e.AddressId)
+            .HasColumnName("address_id")
             .ValueGeneratedOnAdd()
             .IsRequired();
 

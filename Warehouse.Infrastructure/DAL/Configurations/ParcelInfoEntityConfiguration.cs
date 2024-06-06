@@ -18,13 +18,13 @@ internal class ParcelInfoEntityConfiguration : IEntityTypeConfiguration<ParcelIn
 
     private static void SetPrimaryKey(EntityTypeBuilder<ParcelInfoEntity> builder)
     {
-        builder.HasKey(e => e.Id);
+        builder.HasKey(e => e.ParcelInfoId);
     }
 
     private static void ConfigureColumns(EntityTypeBuilder<ParcelInfoEntity> builder)
     {
-        builder.Property(e => e.Id)
-            .HasColumnName("id")
+        builder.Property(e => e.ParcelInfoId)
+            .HasColumnName("parcel_info_id")
             .IsRequired();
 
         //builder.Property(e => e.ProductId)

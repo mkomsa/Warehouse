@@ -4,7 +4,7 @@ using Warehouse.Infrastructure.DAL.Entities;
 
 namespace Warehouse.Infrastructure.DAL.Configurations;
 
-internal class ProductEntityConfiguration
+internal class ProductEntityConfiguration : IEntityTypeConfiguration<ProductEntity>
 {
     public void Configure(EntityTypeBuilder<ProductEntity> builder)
     {
@@ -20,13 +20,21 @@ internal class ProductEntityConfiguration
 
     private static void SetPrimaryKey(EntityTypeBuilder<ProductEntity> builder)
     {
-        builder.HasKey(e => e.Id);
+        builder.HasKey(e => e.ProductId);
     }
 
     private static void ConfigureColumns(EntityTypeBuilder<ProductEntity> builder)
     {
-        builder.Property(e => e.Id)
-            .HasColumnName("id")
+        builder.HasOne(e => e.ParcelInfoEntity)
+            .WithMany()
+            .HasForeignKey(e => e.ParcelInfoId);
+
+        builder.HasOne(e => e.ManufacturerEntity)
+            .WithMany()
+            .HasForeignKey(e => e.ManufacturerId);
+
+        builder.Property(e => e.ProductId)
+            .HasColumnName("product_id")
             .ValueGeneratedOnAdd()
             .IsRequired();
 
@@ -34,21 +42,13 @@ internal class ProductEntityConfiguration
         //    .HasColumnName("category_id")
         //    .IsRequired();
 
-        builder.Property(e => e.ParcelInfoEntityId)
+        builder.Property(e => e.ParcelInfoId)
             .HasColumnName("parcel_info_id")
             .IsRequired();
 
-        builder.HasOne<ParcelInfoEntity>()
-            .WithMany()
-            .HasForeignKey(e => e.ParcelInfoEntityId);
-
-        builder.Property(e => e.ManufacturerEntityId)
+        builder.Property(e => e.ManufacturerId)
             .HasColumnName("manufacturer_id")
             .IsRequired();
-
-        builder.HasOne<ManufacturerEntity>()
-            .WithMany()
-            .HasForeignKey(e => e.ManufacturerEntityId);
 
         builder.Property(e => e.Price)
             .HasColumnName("price")

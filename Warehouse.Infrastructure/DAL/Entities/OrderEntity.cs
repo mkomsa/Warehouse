@@ -1,30 +1,32 @@
-﻿using Warehouse.Core.Orders.Models;
+﻿using System.ComponentModel.DataAnnotations;
+using Warehouse.Core.Orders.Models;
 using Warehouse.Core.Products.Models;
 
 namespace Warehouse.Infrastructure.DAL.Entities;
 
 public class OrderEntity
 {
-    public Guid Id { get; set; }
-    public Guid CustomerEntityId { get; set; }
+    [Key]
+    public Guid OrderId { get; set; }
+    public Guid CustomerId { get; set; }
     public CustomerEntity CustomerEntity { get; set; } = new();
-    public Guid AddressEntityId { get; set; }
+    public Guid AddressId { get; set; }
     public AddressEntity AddressEntity { get; set; } = new();
     public ICollection<OrderProductEntity> OrderProducts { get; set; } = new List<OrderProductEntity>();
-    public Guid InvoiceEntityId { get; set; }
+    public Guid InvoiceId { get; set; }
     public InvoiceEntity InvoiceEntity { get; set; } = new();
 
     public static OrderEntity FromOrder(Order order)
     {
         return new OrderEntity()
         {
-            Id = order.Id,
-            CustomerEntityId = order.Customer.Id,
-            AddressEntityId = order.Address.Id,
+            OrderId = order.Id,
+            CustomerId = order.Customer.Id,
+            AddressId = order.Address.Id,
             CustomerEntity = CustomerEntity.FromCustomer(order.Customer),
             AddressEntity = AddressEntity.FromAddress(order.Address),
             OrderProducts = ToOrderProducts(order),
-            InvoiceEntityId = order.Invoice.Id,
+            InvoiceId = order.Invoice.Id,
             InvoiceEntity = InvoiceEntity.FromInvoice(order.Invoice)
         };
     }
@@ -39,9 +41,9 @@ public class OrderEntity
         {
             OrderProductEntity newProduct = new OrderProductEntity()
             {
-                Id = Guid.NewGuid(),
-                OrderEntityId = order.Id,
-                ProductEntityId = product.Id,
+                OrderProductId = Guid.NewGuid(),
+                OrderId = order.Id,
+                ProductId = product.Id,
             };
 
             orderProducts.Add(newProduct);
@@ -54,13 +56,13 @@ public class OrderEntity
     {
         return new Order()
         {
-            Id = Id,
+            Id = OrderId,
             Address = AddressEntity.ToAddress(),
             Customer = CustomerEntity.ToCustomer(),
             Invoice = InvoiceEntity.ToInvoice(),
             Products = OrderProducts.Select(op => new Product()
             {
-                Id = op.ProductEntity?.Id ?? Guid.Empty,
+                Id = op.ProductEntity?.ProductId ?? Guid.Empty,
                 Manufacturer = op.ProductEntity.ManufacturerEntity.ToManufacturer(),
                 ParcelInfo = op.ProductEntity.ParcelInfoEntity.ToParcelInfo(),
                 AvailableAmount = op.ProductEntity?.AvailableAmount ?? 0,

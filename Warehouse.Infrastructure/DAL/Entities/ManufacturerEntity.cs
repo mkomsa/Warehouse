@@ -1,11 +1,13 @@
-﻿using Warehouse.Core.Manufacturers.Models;
+﻿using System.ComponentModel.DataAnnotations;
+using Warehouse.Core.Manufacturers.Models;
 
 namespace Warehouse.Infrastructure.DAL.Entities;
 
 public class ManufacturerEntity
 {
-    public Guid Id { get; set; }
-    public Guid AddressEntityId { get; set; }
+    [Key]
+    public Guid ManufacturerId { get; set; }
+    public Guid AddressId { get; set; }
     public AddressEntity AddressEntity { get; set; }
     public string Name { get; set; }
     public string Email { get; set; }
@@ -15,7 +17,7 @@ public class ManufacturerEntity
     {
         return new Manufacturer()
         {
-            Id = Id,
+            Id = ManufacturerId,
             Address = AddressEntity.ToAddress(),
             Name = Name,
             Email = Email,

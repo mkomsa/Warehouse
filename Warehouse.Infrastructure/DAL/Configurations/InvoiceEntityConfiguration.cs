@@ -20,13 +20,13 @@ internal class InvoiceEntityConfiguration : IEntityTypeConfiguration<InvoiceEnti
 
     private static void SetPrimaryKey(EntityTypeBuilder<InvoiceEntity> builder)
     {
-        builder.HasKey(e => e.Id);
+        builder.HasKey(e => e.InvoiceId);
     }
 
     private static void ConfigureColumns(EntityTypeBuilder<InvoiceEntity> builder)
     {
-        builder.Property(e => e.Id)
-            .HasColumnName("id")
+        builder.Property(e => e.InvoiceId)
+            .HasColumnName("invoice_id")
             .ValueGeneratedOnAdd()
             .IsRequired();
 
@@ -52,6 +52,11 @@ internal class InvoiceEntityConfiguration : IEntityTypeConfiguration<InvoiceEnti
 
         builder.Property(e => e.NetValue)
             .HasColumnName("net_value")
+            .HasMaxLength(16)
+            .IsRequired();
+
+        builder.Property(e => e.VatRate)
+            .HasColumnName("vat_rate")
             .HasMaxLength(4)
             .IsRequired();
     }

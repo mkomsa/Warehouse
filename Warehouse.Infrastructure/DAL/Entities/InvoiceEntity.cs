@@ -1,10 +1,12 @@
-﻿using Warehouse.Core.Invoices.Models;
+﻿using System.ComponentModel.DataAnnotations;
+using Warehouse.Core.Invoices.Models;
 
 namespace Warehouse.Infrastructure.DAL.Entities;
 
 public class InvoiceEntity
 {
-    public Guid Id { get; set; }
+    [Key]
+    public Guid InvoiceId { get; set; }
     public DateTime TransactionDate { get; set; }
     public double NetValue { get; set; }
     public double GrossValue { get; set; }
@@ -15,7 +17,7 @@ public class InvoiceEntity
     {
         return new InvoiceEntity()
         {
-            Id = invoice.Id,
+            InvoiceId = invoice.Id,
             TransactionDate = invoice.TransactionDate,
             NetValue = invoice.NetValue,
             GrossValue = invoice.GrossValue,
@@ -27,7 +29,7 @@ public class InvoiceEntity
     {
         return new Invoice()
         {
-            Id = Id,
+            Id = InvoiceId,
             TransactionDate = TransactionDate,
             NetValue = NetValue,
             GrossValue = GrossValue,
