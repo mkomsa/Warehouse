@@ -13,6 +13,14 @@ internal class CreateOrderCommandHandler(IOrderRepository orderRepository) : IRe
 {
     public async Task<Guid> Handle(CreateOrderCommand command, CancellationToken cancellationToken)
     {
+        Guid addressId = Guid.NewGuid();
+        Guid customerId = Guid.NewGuid();
+
+        command.Order.Address.Id = addressId;
+        command.Order.Customer.AddressId = addressId;
+        command.Order.Customer.Id = customerId;
+        command.Order.Invoice.Id = Guid.NewGuid();
+
         return await orderRepository.CreateOrderAsync(command.Order);
 
     }

@@ -49,17 +49,6 @@ internal class OrderRepository(AppDbContext dbContext) : IOrderRepository
             ///       INNER JOIN public.""Invoices"" AS i ON o.""InvoiceEntityId"" = i.""Id""")
             ///    .ToList();
             /// 
-            ///var orders = dbContext.Orders
-            ///    .FromSqlRaw(
-            ///        @"SELECT o.""Id"" AS ""OrderId"", o.""CustomerEntityId"", o.""AddressEntityId"", o.""InvoiceEntityId"",
-            ///             c.""Id"" AS ""CustomerId"", c.""AddressEntityId"" AS ""CustomerAddressId"", c.""Name"" AS ""CustomerName"", c.""FullName"" AS ""CustomerFullName"", c.""Email"" AS ""CustomerEmail"", c.""PhoneNumber"" AS ""CustomerPhoneNumber"",
-            ///             a.""Id"" AS ""AddressId"", a.""PostalCode"", a.""Street"", a.""Apartment"",
-            ///             i.""Id"" AS ""InvoiceId"", i.""TransactionDate"", i.""NetValue"", i.""GrossValue"", i.""Status"", i.""VatRate""
-            ///       FROM public.""Orders"" AS o
-            ///       INNER JOIN public.""Customers"" AS c ON o.""CustomerEntityId"" = c.""Id""
-            ///       INNER JOIN public.""Addresses"" AS a ON o.""AddressEntityId"" = a.""Id""
-            ///       INNER JOIN public.""Invoices"" AS i ON o.""InvoiceEntityId"" = i.""Id""");
-            ///.ToList();
             /// 
             ///var orders = dbContext.Orders.FromSqlRaw(@"select *
             ///   FROM public.""Orders"" as o
@@ -133,16 +122,86 @@ internal class OrderRepository(AppDbContext dbContext) : IOrderRepository
             ///    .FirstOrDefaultAsync(o => o.OrderId == id);
             /// <summary>
 
+
             var orderEntity = await _dbContext.Orders.FirstOrDefaultAsync(o => o.OrderId == id);
 
-            string sqlQuery = @"
-                SELECT * 
-                FROM public.""OrderDetailView""
-                WHERE ""OrderId"" = @OrderId;
-                ";
+            var sql = @"
+            SELECT
+                o.order_id AS ""OrderId"",
+                o.customer_id AS ""CustomerId"",
+                o.address_id AS ""OrderAddressId"",
+                o.invoice_id AS ""InvoiceId"",
+                ce.customer_id AS ""CustomerEntity_Id"",
+                ce.address_id AS ""CustomerEntity_AddressEntityId"",
+                ce.name AS ""CustomerEntity_Name"",
+                ce.full_name AS ""CustomerEntity_FullName"",
+                ce.email AS ""CustomerEntity_Email"",
+                ce.phone_number AS ""CustomerEntity_PhoneNumber"",
+                ca.address_id AS ""CustomerAddressEntity_Id"",
+                ca.postal_code AS ""CustomerAddressEntity_PostalCode"",
+                ca.street AS ""CustomerAddressEntity_Street"",
+                ca.apartment AS ""CustomerAddressEntity_Apartment"",
+                ia.address_id AS ""OrderAddressEntity_Id"",
+                ia.postal_code AS ""OrderAddressEntity_PostalCode"",
+                ia.street AS ""OrderAddressEntity_Street"",
+                ia.apartment AS ""OrderAddressEntity_Apartment"",
+                ie.invoice_id AS ""InvoiceEntity_Id"",
+                ie.transaction_date AS ""InvoiceEntity_TransactionDate"",
+                ie.net_value AS ""InvoiceEntity_NetValue"",
+                ie.gross_value AS ""InvoiceEntity_GrossValue"",
+                ie.status AS ""InvoiceEntity_Status"",
+                ie.vat_rate AS ""InvoiceEntity_VatRate"",
+                op.order_product_id AS ""OrderProduct_Id"",
+                op.order_id AS ""OrderProduct_OrderEntityId"",
+                op.product_id AS ""OrderProduct_ProductEntityId"",
+                p.product_id AS ""ProductEntity_Id"",
+                p.manufacturer_id AS ""ProductEntity_ManufacturerEntityId"",
+                p.parcel_info_id AS ""ProductEntity_ParcelInfoEntityId"",
+                p.available_amount AS ""ProductEntity_AvailableAmount"",
+                p.price AS ""ProductEntity_Price"",
+                ma.manufacturer_id AS ""ManufacturerEntity_Id"",
+                ma.address_id AS ""ManufacturerEntity_AddressEntityId"",
+                ma.name AS ""ManufacturerEntity_Name"",
+                ma.email AS ""ManufacturerEntity_Email"",
+                ma.phone_number AS ""ManufacturerEntity_PhoneNumber"",
+                ma_address.address_id AS ""ManufacturerAddressEntity_Id"",
+                ma_address.postal_code AS ""ManufacturerAddressEntity_PostalCode"",
+                ma_address.street AS ""ManufacturerAddressEntity_Street"",
+                ma_address.apartment AS ""ManufacturerAddressEntity_Apartment"",
+                pa.parcel_info_id AS ""ParcelInfoEntity_Id"",
+                pa.weight AS ""ParcelInfoEntity_Weight"",
+                pa.height AS ""ParcelInfoEntity_Height"",
+                pa.length AS ""ParcelInfoEntity_Length"",
+                pa.width AS ""ParcelInfoEntity_Width""
+                FROM
+                    ""public"".""order"" AS o
+                LEFT JOIN
+                    ""public"".""customer"" AS ce ON o.customer_id = ce.customer_id
+                LEFT JOIN
+                    ""public"".""address"" AS ca ON ce.address_id = ca.address_id
+                LEFT JOIN
+                    ""public"".""address"" AS ia ON o.address_id = ia.address_id
+                LEFT JOIN
+                    ""public"".""invoice"" AS ie ON o.invoice_id = ie.invoice_id
+                LEFT JOIN
+                    ""public"".""order_product"" AS op ON o.order_id = op.order_id
+                LEFT JOIN
+                    ""public"".""product"" AS p ON op.product_id = p.product_id
+                LEFT JOIN
+                    ""public"".""manufacturer"" AS ma ON p.manufacturer_id = ma.manufacturer_id
+                LEFT JOIN
+                    ""public"".""address"" AS ma_address ON ma.address_id = ma_address.address_id
+                LEFT JOIN
+                    ""public"".""parcel_info"" AS pa ON p.parcel_info_id = pa.parcel_info_id
+                WHERE
+                    o.order_id = @orderId";
 
-            var xd = _dbContext.Database.ExecuteSqlRawAsync(sqlQuery,
+            var xd = _dbContext.Database.ExecuteSqlRawAsync(sql,
                 new Npgsql.NpgsqlParameter("@OrderId", id));
+
+            //var haha = _dbContext.Database.SqlQueryRaw<OrderEntity>(sql, new Npgsql.NpgsqlParameter("@OrderId", id)).ToList();
+
+            var haha = _dbContext.Orders.FromSqlRaw(sql, new Npgsql.NpgsqlParameter("@OrderId", id)).ToList();
 
             if (orderEntity == null)
             {
@@ -167,8 +226,8 @@ internal class OrderRepository(AppDbContext dbContext) : IOrderRepository
             {
                 // Inserting AddressEntity
                 string sqlAddress = @"
-                INSERT INTO public.""Addresses"" (""Id"", ""PostalCode"", ""Street"", ""Apartment"")
-                VALUES (@Id, @PostalCode, @Street, @Apartment);";
+    INSERT INTO public.""address"" (""address_id"", ""postal_code"", ""street"", ""apartment"")
+    VALUES (@Id, @PostalCode, @Street, @Apartment);";
 
                 await _dbContext.Database.ExecuteSqlRawAsync(sqlAddress,
                     new Npgsql.NpgsqlParameter("@Id", order.Address.Id),
@@ -179,8 +238,8 @@ internal class OrderRepository(AppDbContext dbContext) : IOrderRepository
 
                 // Inserting InvoiceEntity
                 string sqlInvoice = @"
-                INSERT INTO public.""Invoices"" (""Id"", ""TransactionDate"", ""NetValue"", ""GrossValue"", ""Status"", ""VatRate"")
-                VALUES (@Id, @TransactionDate, @NetValue, @GrossValue, @Status, @VatRate);";
+    INSERT INTO public.""invoice"" (""invoice_id"", ""transaction_date"", ""net_value"", ""gross_value"", ""status"", ""vat_rate"")
+    VALUES (@Id, @TransactionDate, @NetValue, @GrossValue, @Status, @VatRate);";
 
                 await _dbContext.Database.ExecuteSqlRawAsync(sqlInvoice,
                     new Npgsql.NpgsqlParameter("@Id", order.Invoice.Id),
@@ -193,8 +252,8 @@ internal class OrderRepository(AppDbContext dbContext) : IOrderRepository
 
                 // Inserting CustomerEntity
                 string sqlCustomer = @"
-                INSERT INTO public.""Customers"" (""Id"", ""AddressEntityId"", ""Name"", ""FullName"", ""Email"", ""PhoneNumber"")
-                VALUES (@Id, @AddressEntityId, @Name, @FullName, @Email, @PhoneNumber);";
+    INSERT INTO public.""customer"" (""customer_id"", ""address_id"", ""name"", ""full_name"", ""email"", ""phone_number"")
+    VALUES (@Id, @AddressEntityId, @Name, @FullName, @Email, @PhoneNumber);";
 
                 await _dbContext.Database.ExecuteSqlRawAsync(sqlCustomer,
                     new Npgsql.NpgsqlParameter("@Id", order.Customer.Id),
@@ -207,8 +266,8 @@ internal class OrderRepository(AppDbContext dbContext) : IOrderRepository
 
                 // Inserting OrderEntity
                 string sqlOrder = @"
-                INSERT INTO ""public"".""Orders"" (""Id"", ""CustomerEntityId"", ""AddressEntityId"", ""InvoiceEntityId"")
-                VALUES (@Id, @CustomerEntityId, @AddressEntityId, @InvoiceEntityId);";
+    INSERT INTO ""public"".""order"" (""order_id"", ""customer_id"", ""address_id"", ""invoice_id"")
+    VALUES (@Id, @CustomerEntityId, @AddressEntityId, @InvoiceEntityId);";
 
                 await _dbContext.Database.ExecuteSqlRawAsync(sqlOrder,
                     new Npgsql.NpgsqlParameter("@Id", order.Id),
@@ -221,13 +280,13 @@ internal class OrderRepository(AppDbContext dbContext) : IOrderRepository
                 foreach (var product in order.Products)
                 {
                     string sqlOrderProduct = @"
-                    INSERT INTO ""public"".""OrdersProducts"" (""Id"", ""OrderEntityId"", ""ProductEntityId"")
-                    VALUES (@Id, @OrderEntityId, @ProductEntityId);";
+        INSERT INTO ""public"".""order_product"" (""order_id"", ""product_id"", ""order_product_id"")
+        VALUES (@OrderId, @ProductId, @OrderProductId);";
 
                     await _dbContext.Database.ExecuteSqlRawAsync(sqlOrderProduct,
-                        new Npgsql.NpgsqlParameter("@Id", Guid.NewGuid()),
-                        new Npgsql.NpgsqlParameter("@OrderEntityId", order.Id),
-                        new Npgsql.NpgsqlParameter("@ProductEntityId", product.Id)
+                        new Npgsql.NpgsqlParameter("@OrderId", order.Id),
+                        new Npgsql.NpgsqlParameter("@ProductId", product.Id),
+                        new Npgsql.NpgsqlParameter("@OrderProductId", Guid.NewGuid())
                     );
                 }
 

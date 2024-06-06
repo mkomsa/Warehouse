@@ -52,6 +52,10 @@ internal class InvoiceEntityConfiguration : IEntityTypeConfiguration<InvoiceEnti
 
         builder.Property(e => e.NetValue)
             .HasColumnName("net_value")
+            .HasPrecision(18, 2)
+            .HasComputedColumnSql("gross_value * ((100 - vat_rate)/100)", true)
+            .HasConversion(v => double.Round(2, MidpointRounding.AwayFromZero), v => v)
+            .ValueGeneratedOnAddOrUpdate()
             .HasMaxLength(16)
             .IsRequired();
 
@@ -60,4 +64,9 @@ internal class InvoiceEntityConfiguration : IEntityTypeConfiguration<InvoiceEnti
             .HasMaxLength(4)
             .IsRequired();
     }
+
+    //private static void ConfigureIndexes(EntityTypeBuilder<InvoiceEntity> builder)
+    //{
+    //    builder.HasIndex(e => EF.Functions.(e.NetValue, builder.Property(nameof(InvoiceEntity.GrossValue)).Metadata.Name + ' ' + builder.Property(nameof(InvoiceEntity.VatRate)).Metadata.Name)).HasDatabaseName("IX_invoice_net_value");
+    //}
 }

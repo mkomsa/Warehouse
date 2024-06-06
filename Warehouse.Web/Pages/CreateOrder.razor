@@ -172,7 +172,7 @@
         {
             // Set transaction date to DateTime.UtcNow
             order.Invoice.TransactionDate = DateTime.UtcNow;
-            order.Invoice.NetValue = order.Invoice.GrossValue * (100 - order.Invoice.VatRate)/100;
+            order.Invoice.VatRate = 23;
             order.Invoice.Status = "true";
             order.Customer.FullName = order.Customer.Name;
             order.Customer.Address.Street = order.Address.Street;
