@@ -44,6 +44,10 @@ else
                 <td>@product.Price.ToString("C")</td>
             </tr>
         }
+        <tr>
+            <td colspan="2"><strong>Total</strong></td>
+            <td>@order.Products.Sum(p => p.Price).ToString("C")</td>
+        </tr>
         </tbody>
     </table>
 }

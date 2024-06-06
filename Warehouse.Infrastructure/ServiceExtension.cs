@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
 using Warehouse.Core.Addresses.Repositories;
 using Warehouse.Core.Orders.Repositories;
+using Warehouse.Core.Products.Repositories;
 using Warehouse.Infrastructure.DAL;
 using Warehouse.Infrastructure.DAL.Repositories;
 using Warehouse.Infrastructure.Seeder;
@@ -18,6 +19,7 @@ public static class ServiceExtension
 
         services.AddScoped<IAddressRepository, AddressRepository>();
         services.AddScoped<IOrderRepository, OrderRepository>();
+        services.AddScoped<IProductRepository, ProductRepository>();
         services.AddScoped<AppDbContextSeeder, AppDbContextSeeder>();
     }
 

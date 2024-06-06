@@ -10,6 +10,6 @@ public class Order
     public Guid Id { get; set; }
     public Customer Customer { get; set; }
     public Address Address { get; set; }
-    public IReadOnlyCollection<Product> Products { get; set; } = new List<Product>();
+    public List<Product> Products { get; set; } = new List<Product>();
     public Invoice Invoice { get; set; }
 }

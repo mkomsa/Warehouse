@@ -1,0 +1,146 @@
+﻿@page "/create-order"
+@using Warehouse.Core.Orders.Models
+@using Warehouse.Core.Products.Models
+@using Warehouse.Core.Addresses.Models
+@using Warehouse.Core.Customers.Models
+@using Warehouse.Core.Invoices.Models
+@inject HttpClient HttpClient
+@inject NavigationManager Navigation
+
+<h3>Create Order</h3>
+
+@* @if (errorMessage != null)
+{
+    <p class="text-danger">@errorMessage</p>
+} *@
+
+<form @onsubmit="Create">
+    <div class="form-group">
+        <label for="customerName">Customer Name:</label>
+        <input type="text" class="form-control" id="customerName" @bind="order.Customer.Name">
+    </div>
+    <div class="form-group">
+        <label for="customerEmail">Customer Email:</label>
+        <input type="email" class="form-control" id="customerEmail" @bind="order.Customer.Email">
+    </div>
+    <div class="form-group">
+        <label for="customerPhoneNumber">Customer Phone Number:</label>
+        <input type="text" class="form-control" id="customerPhoneNumber" @bind="order.Customer.PhoneNumber">
+    </div>
+    <div class="form-group">
+        <label for="postalCode">Postal Code:</label>
+        <input type="text" class="form-control" id="postalCode" @bind="order.Address.PostalCode">
+    </div>
+    <div class="form-group">
+        <label for="street">Street:</label>
+        <input type="text" class="form-control" id="street" @bind="order.Address.Street">
+    </div>
+    <div class="form-group">
+        <label for="apartment">Apartment:</label>
+        <input type="text" class="form-control" id="apartment" @bind="order.Address.Apartment">
+    </div>
+    <div class="form-group">
+        <label for="transactionDate">Transaction Date:</label>
+        <input type="datetime-local" class="form-control" id="transactionDate" @bind="order.Invoice.TransactionDate">
+    </div>
+    <div class="form-group">
+        <label for="netValue">Net Value:</label>
+        <input type="number" class="form-control" id="netValue" @bind="order.Invoice.NetValue">
+    </div>
+    <div class="form-group">
+        <label for="grossValue">Gross Value:</label>
+        <input type="number" class="form-control" id="grossValue" @bind="order.Invoice.GrossValue">
+    </div>
+    <div class="form-group">
+        <label for="status">Status:</label>
+        <input type="text" class="form-control" id="status" @bind="order.Invoice.Status">
+    </div>
+    <div class="form-group">
+        <label for="vatRate">Vat Rate:</label>
+        <input type="number" class="form-control" id="vatRate" @bind="order.Invoice.VatRate">
+    </div>
+
+    <div class="album py-3 px-1 bg-info-subtle" style="border-radius: 10px;">
+        <h5>Products</h5>
+        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 row-cols-xxl-6"> <!-- Adjusted row-cols classes for responsiveness -->
+            @foreach (var product in products)
+            {
+                <div class="col mb-3">
+                    <div class="card h-100">
+                        <img src="https://picsum.photos/150/100" class="card-img-top" alt="@product.Price">
+                        <div class="card-body d-flex flex-column">
+                            <h6 class="card-title">@product.Manufacturer.Name</h6>
+                            <p class="card-text">$ @product.Price.ToString("0.0")</p>
+                            <button class="btn btn-primary btn-sm mt-auto" @onclick="() => AddToOrder(product)">Add to Order</button>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+
+@code {
+
+    private Order order = new()
+    {
+        Id = Guid.NewGuid(),
+        Address = new Address(),
+        Customer = new Customer()
+        {
+            Address = new Address()
+        },
+        Invoice = new Invoice(),
+        Products = new List<Product>()
+    };
+
+    private List<Product> products = new();
+
+    private string errorMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            products = await HttpClient.GetFromJsonAsync<List<Product>>("https://localhost:7125/api/product");
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"An error occurred while fetching products: {ex.Message}";
+        }
+    }
+
+    private void AddToOrder(Product product)
+    {
+        order.Products.Add(product);
+    }
+
+    private async Task Create()
+    {
+        try
+        {
+            // Set transaction date to DateTime.UtcNow
+            order.Invoice.TransactionDate = DateTime.UtcNow;
+
+            // Send POST request to API to create order
+            var response = await HttpClient.PostAsJsonAsync("https://localhost:7125/api/order", order);
+
+            // Check if request was successful
+            if (response.IsSuccessStatusCode)
+            {
+                // Redirect to orders page
+                Navigation.NavigateTo("/orders");
+            }
+            else
+            {
+                errorMessage = "Failed to create order. Please try again.";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"An error occurred: {ex.Message}";
+        }
+    }
+}
