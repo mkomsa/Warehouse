@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query;
 using Warehouse.Core.Orders.Models;
 using Warehouse.Core.Orders.Repositories;
 using Warehouse.Infrastructure.DAL.Entities;
@@ -66,39 +65,183 @@ internal class OrderRepository(AppDbContext dbContext) : IOrderRepository
             ///    .ToList();
             /// </summary>
 
-            List<OrderEntity> ordersFromView = await _dbContext.Orders
-                .ToListAsync();
+            //List<OrderEntity> ordersFromView = await _dbContext.Orders
+            //    .ToListAsync();
 
-            IIncludableQueryable<OrderEntity, ParcelInfoEntity> baseQuery = _dbContext.Orders
-                .Include(o => o.CustomerEntity)
-                    .ThenInclude(ce => ce.AddressEntity)
-                .Include(o => o.AddressEntity)
-                .Include(o => o.InvoiceEntity)
-                .Include(o => o.OrderProducts)
-                    .ThenInclude(op => op.ProductEntity)
-                        .ThenInclude(p => p.ManufacturerEntity)
-                           .ThenInclude(m => m.AddressEntity)
-               .Include(o => o.OrderProducts)
-                   .ThenInclude(op => op.ProductEntity)
-                       .ThenInclude(p => p.ParcelInfoEntity);
+            //IIncludableQueryable<OrderEntity, ParcelInfoEntity> baseQuery = _dbContext.Orders
+            //    .Include(o => o.CustomerEntity)
+            //        .ThenInclude(ce => ce.AddressEntity)
+            //    .Include(o => o.AddressEntity)
+            //    .Include(o => o.InvoiceEntity)
+            //    .Include(o => o.OrderProducts)
+            //        .ThenInclude(op => op.ProductEntity)
+            //            .ThenInclude(p => p.ManufacturerEntity)
+            //               .ThenInclude(m => m.AddressEntity)
+            //   .Include(o => o.OrderProducts)
+            //       .ThenInclude(op => op.ProductEntity)
+            //           .ThenInclude(p => p.ParcelInfoEntity);
 
-            List<Order> orders = await baseQuery
-                .Select(e => e.ToOrder())
-            .ToListAsync();
+            //List<Order> orders = await baseQuery
+            //    .Select(e => e.ToOrder())
+            //.ToListAsync();
 
-            if (!orders.Any())
-            {
-                return new List<Order>()
+            //if (!orders.Any())
+            //{
+            //    return new List<Order>()
+            //    {
+            //        new Order()
+            //    };
+            //}
+
+            //var orderViews = dbContext.OrderViews.ToList();
+
+            //var entities = orderViews.Select(ov => new OrderEntity()
+            //{
+            //    AddressId = ov.AddressId,
+            //    AddressEntity = new AddressEntity()
+            //    {
+            //        AddressId = ov.AddressId,
+            //        Apartment = ov.AddressApartment,
+            //        PostalCode = ov.AddressPostalCode,
+            //        Street = ov.AddressStreet
+            //    },
+            //    CustomerId = ov.CustomerId,
+            //    CustomerEntity = new CustomerEntity()
+            //    {
+            //        CustomerId = ov.CustomerId,
+            //        AddressEntity = new AddressEntity()
+            //        {
+            //            AddressId = ov.AddressId,
+            //            Apartment = ov.AddressApartment,
+            //            PostalCode = ov.AddressPostalCode,
+            //            Street = ov.AddressStreet
+            //        },
+            //        AddressId = ov.AddressId,
+            //        Email = ov.CustomerEmail,
+            //        PhoneNumber = ov.CustomerPhoneNumber,
+            //        FullName = ov.CustomerFullName,
+            //        Name = ov.CustomerName,
+            //    },
+            //    InvoiceId = ov.InvoiceId,
+            //    InvoiceEntity = new InvoiceEntity()
+            //    {
+            //        InvoiceId = ov.InvoiceId,
+            //        TransactionDate = ov.InvoiceTransactionDate,
+            //        GrossValue = ov.InvoiceGrossValue,
+            //        NetValue = ov.InvoiceNetValue,
+            //        Status = ov.InvoiceStatus,
+            //        VatRate = ov.InvoiceVatRate,
+            //    },
+            //    OrderId = ov.OrderId,
+            //    OrderProducts = GetProducts(ov),
+
+            //});
+
+            // Fetch the raw data from the view
+            var orderViews = dbContext.OrderViews.ToList();
+
+            // Group by OrderId to handle duplicates
+            var groupedOrderViews = orderViews
+                .GroupBy(ov => ov.OrderId)
+                .Select(group => new
                 {
-                    new Order()
-                };
-            }
+                    OrderView = group.FirstOrDefault(),
+                    OrderProducts = group.Select(ov => new OrderProductEntity
+                    {
+                        OrderProductId = ov.OrderProductId,
+                        OrderId = ov.OrderProductOrderId,
+                        ProductId = ov.OrderProductProductId,
+                        ProductEntity = new ProductEntity
+                        {
+                            ProductId = ov.ProductId,
+                            ManufacturerId = ov.ProductManufacturerId,
+                            ParcelInfoId = ov.ProductParcelInfoId,
+                            AvailableAmount = ov.ProductAvailableAmount,
+                            Price = ov.ProductPrice,
+                            ManufacturerEntity = new ManufacturerEntity
+                            {
+                                ManufacturerId = ov.ManufacturerId,
+                                AddressId = ov.ManufacturerAddressId,
+                                AddressEntity = new AddressEntity
+                                {
+                                    AddressId = ov.CustomerAddressId,
+                                    Apartment = ov.AddressApartment,
+                                    PostalCode = ov.AddressPostalCode,
+                                    Street = ov.AddressStreet
+                                },
+                                Email = ov.CustomerEmail,
+                                Name = ov.CustomerName,
+                                PhoneNumber = ov.CustomerPhoneNumber
+                            },
+                            ParcelInfoEntity = new ParcelInfoEntity
+                            {
+                                ParcelInfoId = ov.ParcelInfoId,
+                                Weight = ov.ParcelInfoWeight,
+                                Height = ov.ParcelInfoHeight,
+                                Length = ov.ParcelInfoLength
+                            }
+                        }
+                    }).ToList()
+                })
+                .ToList();
 
+            // Map grouped data to OrderEntity
+            var orderEntitiesFromView = groupedOrderViews.Select(group => new OrderEntity
+            {
+                OrderId = group.OrderView.OrderId,
+                CustomerId = group.OrderView.CustomerId,
+                AddressId = group.OrderView.AddressId,
+                InvoiceId = group.OrderView.InvoiceId,
+                AddressEntity = new AddressEntity
+                {
+                    AddressId = group.OrderView.AddressId,
+                    Apartment = group.OrderView.AddressApartment,
+                    PostalCode = group.OrderView.AddressPostalCode,
+                    Street = group.OrderView.AddressStreet
+                },
+                CustomerEntity = new CustomerEntity
+                {
+                    CustomerId = group.OrderView.CustomerId,
+                    AddressId = group.OrderView.AddressId,
+                    Email = group.OrderView.CustomerEmail,
+                    PhoneNumber = group.OrderView.CustomerPhoneNumber,
+                    FullName = group.OrderView.CustomerFullName,
+                    Name = group.OrderView.CustomerName,
+                    AddressEntity = new AddressEntity
+                    {
+                        AddressId = group.OrderView.CustomerAddressId,
+                        Apartment = group.OrderView.AddressApartment,
+                        PostalCode = group.OrderView.AddressPostalCode,
+                        Street = group.OrderView.AddressStreet
+                    }
+                },
+                InvoiceEntity = new InvoiceEntity
+                {
+                    InvoiceId = group.OrderView.InvoiceId,
+                    TransactionDate = group.OrderView.InvoiceTransactionDate,
+                    GrossValue = group.OrderView.InvoiceGrossValue,
+                    NetValue = group.OrderView.InvoiceNetValue,
+                    Status = group.OrderView.InvoiceStatus,
+                    VatRate = group.OrderView.InvoiceVatRate
+                },
+                OrderProducts = group.OrderProducts
+            });
+
+            //return orderEntities;
+            var orders = orderEntitiesFromView.Select(o => o.ToOrder()).ToList();
             return orders;
         }
         catch (Exception ex)
         {
             throw new DbOperationException("GetAddresses failed.", ex);
+        }
+
+        List<OrderProductEntity> GetProducts(OrderView ov)
+        {
+            return new List<OrderProductEntity>()
+            {
+
+            };
         }
     }
 
