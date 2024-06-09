@@ -1,3 +1,0 @@
-insert into public."ParcelsInfo" ("Id", "Length", "Width", "Height", "Weight") values ('412b4fdc-23c7-4406-82aa-b6fe965d434e', 39, 42, 22, 31);
-insert into public."ParcelsInfo" ("Id", "Length", "Width", "Height", "Weight") values ('fcb4b6a6-0053-402a-bf4a-deed6ec52f98', 98, 68, 50, 96);
-insert into public."ParcelsInfo" ("Id", "Length", "Width", "Height", "Weight") values ('6a782326-8044-4655-bcb6-099168aaa8a5', 50, 38, 15, 17);
