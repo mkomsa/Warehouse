@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 using Warehouse.Infrastructure.DAL.Entities;
+using Warehouse.Infrastructure.DAL.Views;
 
 namespace Warehouse.Infrastructure.DAL;
 
@@ -19,6 +20,7 @@ public class AppDbContext : DbContext
     public DbSet<OrderEntity> Orders { get; set; }
     public DbSet<OrderProductEntity> OrdersProducts { get; set; }
     public DbSet<OrderView> OrderViews { get; set; }
+    public DbSet<ProductView> ProductViews { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -59,6 +61,28 @@ public class AppDbContext : DbContext
             entity.Property(e => e.ParcelInfoWeight).HasColumnName("parcel_info_weight");
             entity.Property(e => e.ParcelInfoHeight).HasColumnName("parcel_info_height");
             entity.Property(e => e.ParcelInfoLength).HasColumnName("parcel_info_length");
+            entity.ToView("order_view");
+        });
+        modelBuilder.Entity<ProductView>(entity =>
+        {
+            entity.HasNoKey();
+            entity.Property(e => e.ProductId).HasColumnName("product_id");
+            entity.Property(e => e.Price).HasColumnName("price");
+            entity.Property(e => e.AvailableAmount).HasColumnName("available_amount");
+            entity.Property(e => e.ParcelInfoId).HasColumnName("parcel_info_id");
+            entity.Property(e => e.Length).HasColumnName("length");
+            entity.Property(e => e.Width).HasColumnName("width");
+            entity.Property(e => e.Height).HasColumnName("height");
+            entity.Property(e => e.Weight).HasColumnName("weight");
+            entity.Property(e => e.ManufacturerId).HasColumnName("manufacturer_id");
+            entity.Property(e => e.ManufacturerName).HasColumnName("manufacturer_name");
+            entity.Property(e => e.ManufacturerEmail).HasColumnName("manufacturer_email");
+            entity.Property(e => e.ManufacturerPhone).HasColumnName("manufacturer_phone");
+            entity.Property(e => e.ManufacturerAddressId).HasColumnName("manufacturer_address_id");
+            entity.Property(e => e.ManufacturerPostalCode).HasColumnName("manufacturer_postal_code");
+            entity.Property(e => e.ManufacturerStreet).HasColumnName("manufacturer_street");
+            entity.Property(e => e.ManufacturerApartment).HasColumnName("manufacturer_apartment");
+            entity.ToView("product_view");
         });
     }
 }

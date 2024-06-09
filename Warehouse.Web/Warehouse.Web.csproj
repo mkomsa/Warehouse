@@ -16,4 +16,12 @@
     <ProjectReference Include="..\Warehouse.Core\Warehouse.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Pages\Products.razor" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="Pages\Products.razor" />
+  </ItemGroup>
+
 </Project>

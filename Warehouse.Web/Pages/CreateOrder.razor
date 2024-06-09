@@ -101,7 +101,7 @@
                         <div class="card-body d-flex flex-column">
                             <h6 class="card-title">@product.Manufacturer.Name</h6>
                             <p class="card-text">$ @product.Price.ToString("0.0")</p>
-                            <button class="btn btn-primary btn-sm mt-auto" @onclick="() => AddToOrder(product)">Add to Order</button>
+                            <button type="button" class="btn btn-primary btn-sm mt-auto" @onclick="() => AddToOrder(product)">Add to Order</button>
                         </div>
                     </div>
                 </div>
@@ -158,19 +158,12 @@
     {
         order.Products.Add(product);
         order.Invoice.GrossValue += product.Price;
-        CalculateNetValue();
-    }
-
-    private void CalculateNetValue()
-    {
-        order.Invoice.NetValue = order.Invoice.GrossValue / (1 + (order.Invoice.VatRate / 100));
     }
 
     private async Task Create()
     {
         try
         {
-            // Set transaction date to DateTime.UtcNow
             order.Invoice.TransactionDate = DateTime.UtcNow;
             order.Invoice.VatRate = 23;
             order.Invoice.Status = "true";
@@ -179,7 +172,7 @@
             order.Customer.Address.Apartment = order.Address.Apartment;
             order.Customer.Address.PostalCode = order.Address.PostalCode;
 
-            var response = await HttpClient.PostAsJsonAsync("https://localhost:7125/api/order", order);
+            HttpResponseMessage response = await HttpClient.PostAsJsonAsync("https://localhost:7125/api/order", order);
 
             // Check if request was successful
             if (response.IsSuccessStatusCode)
