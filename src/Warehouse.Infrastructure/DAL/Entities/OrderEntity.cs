@@ -15,6 +15,7 @@ public class OrderEntity
     public ICollection<OrderProductEntity> OrderProducts { get; set; } = new List<OrderProductEntity>();
     public Guid InvoiceId { get; set; }
     public InvoiceEntity InvoiceEntity { get; set; } = new();
+    public string Status { get; set; } = String.Empty;
 
     public static OrderEntity FromOrder(Order order)
     {
@@ -27,7 +28,8 @@ public class OrderEntity
             AddressEntity = AddressEntity.FromAddress(order.Address),
             OrderProducts = ToOrderProducts(order),
             InvoiceId = order.Invoice.Id,
-            InvoiceEntity = InvoiceEntity.FromInvoice(order.Invoice)
+            InvoiceEntity = InvoiceEntity.FromInvoice(order.Invoice),
+            Status = order.Status,
         };
     }
 
@@ -67,7 +69,8 @@ public class OrderEntity
                 ParcelInfo = op.ProductEntity.ParcelInfoEntity.ToParcelInfo(),
                 AvailableAmount = op.ProductEntity?.AvailableAmount ?? 0,
                 Price = op.ProductEntity?.Price ?? 0,
-            }).ToList()
+            }).ToList(),
+            Status = Status
         };
     }
 }

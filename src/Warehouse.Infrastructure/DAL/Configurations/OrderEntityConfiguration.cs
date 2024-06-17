@@ -62,5 +62,10 @@ internal class OrderEntityConfiguration : IEntityTypeConfiguration<OrderEntity>
         builder.Property(e => e.InvoiceId)
             .HasColumnName("invoice_id")
             .IsRequired();
+
+        builder.Property(e => e.Status)
+            .HasColumnName("status")
+            .HasDefaultValue("created")
+            .IsRequired();
     }
 }

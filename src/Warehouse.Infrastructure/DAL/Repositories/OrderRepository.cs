@@ -359,6 +359,11 @@ internal class OrderRepository(AppDbContext dbContext) : IOrderRepository
         }
     }
 
+    public Task<Guid> UpdateOrderAsync(Order order)
+    {
+        throw new NotImplementedException();
+    }
+
     public IEnumerable<OrderEntity> GroupAndMapViews(List<OrderView> orderViews)
     {
         var groupedOrderViews = orderViews
@@ -412,6 +417,7 @@ internal class OrderRepository(AppDbContext dbContext) : IOrderRepository
             CustomerId = group.OrderView.CustomerId,
             AddressId = group.OrderView.AddressId,
             InvoiceId = group.OrderView.InvoiceId,
+            Status = group.OrderView.Status,
             AddressEntity = new AddressEntity
             {
                 AddressId = group.OrderView.AddressId,

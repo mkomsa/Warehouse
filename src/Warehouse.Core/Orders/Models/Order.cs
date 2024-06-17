@@ -12,4 +12,5 @@ public class Order
     public Address Address { get; set; }
     public List<Product> Products { get; set; } = new List<Product>();
     public Invoice Invoice { get; set; }
+    public string Status { get; set; }
 }

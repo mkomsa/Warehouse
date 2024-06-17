@@ -34,6 +34,7 @@ public class AppDbContext : DbContext
             entity.Property(e => e.CustomerId).HasColumnName("customer_id");
             entity.Property(e => e.AddressId).HasColumnName("address_id");
             entity.Property(e => e.InvoiceId).HasColumnName("invoice_id");
+            entity.Property(e => e.Status).HasColumnName("status");
             entity.Property(e => e.CustomerAddressId).HasColumnName("customer_address_id");
             entity.Property(e => e.CustomerName).HasColumnName("customer_name");
             entity.Property(e => e.CustomerFullName).HasColumnName("customer_full_name");

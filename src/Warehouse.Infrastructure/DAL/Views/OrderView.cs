@@ -4,6 +4,7 @@
     public Guid CustomerId { get; set; }
     public Guid AddressId { get; set; }
     public Guid InvoiceId { get; set; }
+    public string Status { get; set; }
     public Guid CustomerAddressId { get; set; }
     public string CustomerName { get; set; }
     public string CustomerFullName { get; set; }
