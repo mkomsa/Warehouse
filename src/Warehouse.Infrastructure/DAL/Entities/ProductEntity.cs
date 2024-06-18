@@ -7,6 +7,7 @@ public class ProductEntity
 {
     [Key]
     public Guid ProductId { get; set; }
+    public string Name { get; set; }
     public Guid ParcelInfoId { get; set; }
     public ParcelInfoEntity ParcelInfoEntity { get; set; }
     public Guid ManufacturerId { get; set; }
@@ -20,6 +21,7 @@ public class ProductEntity
         return new Product()
         {
             Id = ProductId,
+            Name = Name,
             ParcelInfo = ParcelInfoEntity.ToParcelInfo(),
             Manufacturer = ManufacturerEntity.ToManufacturer(),
             AvailableAmount = AvailableAmount,

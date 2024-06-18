@@ -65,6 +65,7 @@ public class OrderEntity
             Products = OrderProducts.Select(op => new Product()
             {
                 Id = op.ProductEntity?.ProductId ?? Guid.Empty,
+                Name = op.ProductEntity.Name,
                 Manufacturer = op.ProductEntity.ManufacturerEntity.ToManufacturer(),
                 ParcelInfo = op.ProductEntity.ParcelInfoEntity.ToParcelInfo(),
                 AvailableAmount = op.ProductEntity?.AvailableAmount ?? 0,

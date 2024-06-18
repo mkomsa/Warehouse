@@ -3,6 +3,7 @@
 public class ProductView
 {
     public Guid ProductId { get; set; }
+    public string Name { get; set; }
     public double Price { get; set; }
     public int AvailableAmount { get; set; }
     public Guid ParcelInfoId { get; set; }

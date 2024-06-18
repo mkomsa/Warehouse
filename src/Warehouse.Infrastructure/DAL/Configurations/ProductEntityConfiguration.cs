@@ -38,9 +38,9 @@ internal class ProductEntityConfiguration : IEntityTypeConfiguration<ProductEnti
             .ValueGeneratedOnAdd()
             .IsRequired();
 
-        //builder.Property(e => e.CategoryId)
-        //    .HasColumnName("category_id")
-        //    .IsRequired();
+        builder.Property(e => e.Name)
+            .HasColumnName("name")
+            .IsRequired();
 
         builder.Property(e => e.ParcelInfoId)
             .HasColumnName("parcel_info_id")

@@ -1,6 +1,8 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Warehouse.Core.Orders.Commands.Create;
+using Warehouse.Core.Orders.Commands.Delete;
+using Warehouse.Core.Orders.Commands.Update;
 using Warehouse.Core.Orders.Models;
 using Warehouse.Core.Orders.Queries.GetOrderById;
 using Warehouse.Core.Orders.Queries.GetOrders;
@@ -45,5 +47,32 @@ public class OrderController(IMediator mediator) : ControllerBase
         Guid result = await _mediator.Send(command);
 
         return Ok(result);
+    }
+
+    [HttpPatch("{id}/change-status")]
+    public async Task<IActionResult> ChangeStatus([FromRoute] Guid id, [FromBody] string updateStatus)
+    {
+        UpdateOrderStatusCommand command = new UpdateOrderStatusCommand()
+        {
+            Id = id,
+            Status = updateStatus
+        };
+
+        Guid result = await _mediator.Send(command);
+
+        return Ok(result);
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> DeleteOrder([FromRoute] Guid id)
+    {
+        DeleteOrderCommand command = new DeleteOrderCommand()
+        {
+            Id = id
+        };
+
+        await mediator.Send(command);
+
+        return NoContent();
     }
 }

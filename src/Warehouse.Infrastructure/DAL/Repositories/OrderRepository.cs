@@ -14,128 +14,6 @@ internal class OrderRepository(AppDbContext dbContext) : IOrderRepository
     {
         try
         {
-            /// <summary>
-            ///  just for testing, now view does the job
-            /// //IIncludableQueryable<OrderEntity, ParcelInfoEntity> baseQuery = _dbContext.Orders
-            ///    .Include(o => o.CustomerEntity)
-            ///        .ThenInclude(ce => ce.AddressEntity)
-            ///    .Include(o => o.AddressEntity)
-            ///    .Include(o => o.InvoiceEntity)
-            ///    .Include(o => o.OrderProducts)
-            ///        .ThenInclude(op => op.ProductEntity)
-            ///            .ThenInclude(p => p.ManufacturerEntity)
-            ///                .ThenInclude(m => m.AddressEntity)
-            ///    .Include(o => o.OrderProducts)
-            ///        .ThenInclude(op => op.ProductEntity)
-            ///            .ThenInclude(p => p.ParcelInfoEntity);
-            /// 
-            ///List<Order> orders = await baseQuery
-            ///    .Select(e => e.ToOrder())
-            ///    .ToListAsync();
-            /// 
-            ///var orders = dbContext.Orders
-            ///    .FromSqlRaw(@"SELECT o.*, c.*, a.*, i.*
-            ///       FROM public.""Orders"" o
-            ///       INNER JOIN public.""Customers"" c ON o.CustomerEntityId = c.Id
-            ///       INNER JOIN public.""Addresses"" a ON o.AddressEntityId = a.Id
-            ///       INNER JOIN public.""Invoices"" i ON o.InvoiceEntityId = i.Id")
-            ///    .ToList();
-            ///var orders = dbContext.Orders
-            ///    .FromSqlRaw(@"SELECT ""o"".*, ""c"".*, ""a"".*, ""i"".*
-            ///       FROM public.""Orders"" AS o
-            ///       INNER JOIN public.""Customers"" AS c ON o.""CustomerEntityId"" = c.""Id""
-            ///       INNER JOIN public.""Addresses"" AS a ON o.""AddressEntityId"" = a.""Id""
-            ///       INNER JOIN public.""Invoices"" AS i ON o.""InvoiceEntityId"" = i.""Id""")
-            ///    .ToList();
-            /// 
-            /// 
-            ///var orders = dbContext.Orders.FromSqlRaw(@"select *
-            ///   FROM public.""Orders"" as o
-            ///   INNER JOIN public.""Customers"" c ON o.""CustomerEntityId"" = c.""Id""
-            ///   INNER JOIN public.""Addresses"" a ON o.""AddressEntityId"" = a.""Id""
-            ///   INNER JOIN public.""Invoices"" i ON o.""InvoiceEntityId"" = i.""Id""").ToList();
-            /// 
-            ///var orders = dbContext.Orders
-            ///    .FromSqlRaw(@"SELECT o.*, c.*, a.*, i.*
-            ///       FROM public.""Orders"" AS o
-            ///       INNER JOIN public.""Customers"" AS c ON o.""CustomerEntityId"" = c.""Id""
-            ///       INNER JOIN public.""Addresses"" AS a ON o.""AddressEntityId"" = a.""Id""
-            ///       INNER JOIN public.""Invoices"" AS i ON o.""InvoiceEntityId"" = i.""Id""")
-            ///    .Include(o => o.OrderProducts) // Include any related entities if needed
-            ///    .ToList();
-            /// </summary>
-
-            //List<OrderEntity> ordersFromView = await _dbContext.Orders
-            //    .ToListAsync();
-
-            //IIncludableQueryable<OrderEntity, ParcelInfoEntity> baseQuery = _dbContext.Orders
-            //    .Include(o => o.CustomerEntity)
-            //        .ThenInclude(ce => ce.AddressEntity)
-            //    .Include(o => o.AddressEntity)
-            //    .Include(o => o.InvoiceEntity)
-            //    .Include(o => o.OrderProducts)
-            //        .ThenInclude(op => op.ProductEntity)
-            //            .ThenInclude(p => p.ManufacturerEntity)
-            //               .ThenInclude(m => m.AddressEntity)
-            //   .Include(o => o.OrderProducts)
-            //       .ThenInclude(op => op.ProductEntity)
-            //           .ThenInclude(p => p.ParcelInfoEntity);
-
-            //List<Order> orders = await baseQuery
-            //    .Select(e => e.ToOrder())
-            //.ToListAsync();
-
-            //if (!orders.Any())
-            //{
-            //    return new List<Order>()
-            //    {
-            //        new Order()
-            //    };
-            //}
-
-            //var orderViews = dbContext.OrderViews.ToList();
-
-            //var entities = orderViews.Select(ov => new OrderEntity()
-            //{
-            //    AddressId = ov.AddressId,
-            //    AddressEntity = new AddressEntity()
-            //    {
-            //        AddressId = ov.AddressId,
-            //        Apartment = ov.AddressApartment,
-            //        PostalCode = ov.AddressPostalCode,
-            //        Street = ov.AddressStreet
-            //    },
-            //    CustomerId = ov.CustomerId,
-            //    CustomerEntity = new CustomerEntity()
-            //    {
-            //        CustomerId = ov.CustomerId,
-            //        AddressEntity = new AddressEntity()
-            //        {
-            //            AddressId = ov.AddressId,
-            //            Apartment = ov.AddressApartment,
-            //            PostalCode = ov.AddressPostalCode,
-            //            Street = ov.AddressStreet
-            //        },
-            //        AddressId = ov.AddressId,
-            //        Email = ov.CustomerEmail,
-            //        PhoneNumber = ov.CustomerPhoneNumber,
-            //        FullName = ov.CustomerFullName,
-            //        Name = ov.CustomerName,
-            //    },
-            //    InvoiceId = ov.InvoiceId,
-            //    InvoiceEntity = new InvoiceEntity()
-            //    {
-            //        InvoiceId = ov.InvoiceId,
-            //        TransactionDate = ov.InvoiceTransactionDate,
-            //        GrossValue = ov.InvoiceGrossValue,
-            //        NetValue = ov.InvoiceNetValue,
-            //        Status = ov.InvoiceStatus,
-            //        VatRate = ov.InvoiceVatRate,
-            //    },
-            //    OrderId = ov.OrderId,
-            //    OrderProducts = GetProducts(ov),
-            //});
-
             List<OrderView> orderViews = dbContext.OrderViews.ToList();
             IEnumerable<OrderEntity> orderEntitiesFromView = GroupAndMapViews(orderViews);
 
@@ -152,100 +30,6 @@ internal class OrderRepository(AppDbContext dbContext) : IOrderRepository
     {
         try
         {
-            /// <summary>
-            ///OrderEntity? orderEntity = await _dbContext.Orders
-            ///    .Include(o => o.CustomerEntity)
-            ///        .ThenInclude(ce => ce.AddressEntity)
-            ///    .Include(o => o.AddressEntity)
-            ///    .Include(o => o.InvoiceEntity)
-            ///    .Include(o => o.OrderProducts)
-            ///        .ThenInclude(op => op.ProductEntity)
-            ///            .ThenInclude(p => p.ManufacturerEntity)
-            ///            .ThenInclude(m => m.AddressEntity)
-            ///   .Include(o => o.OrderProducts)
-            ///        .ThenInclude(op => op.ProductEntity)
-            ///            .ThenInclude(p => p.ParcelInfoEntity)
-            ///    .FirstOrDefaultAsync(o => o.OrderId == id);
-            /// <summary>
-            ///var orderEntity = await _dbContext.Orders.FirstOrDefaultAsync(o => o.OrderId == id);
-
-            //            var sql = @"
-            //SELECT
-            //    o.order_id AS ""OrderId"",
-            //    o.customer_id AS ""CustomerId"",
-            //    o.address_id AS ""OrderAddressId"",
-            //    o.invoice_id AS ""InvoiceId"",
-            //    ce.customer_id AS ""CustomerEntity_Id"",
-            //    ce.address_id AS ""CustomerEntity_AddressEntityId"",
-            //    ce.name AS ""CustomerEntity_Name"",
-            //    ce.full_name AS ""CustomerEntity_FullName"",
-            //    ce.email AS ""CustomerEntity_Email"",
-            //    ce.phone_number AS ""CustomerEntity_PhoneNumber"",
-            //    ca.address_id AS ""CustomerAddressEntity_Id"",
-            //    ca.postal_code AS ""CustomerAddressEntity_PostalCode"",
-            //    ca.street AS ""CustomerAddressEntity_Street"",
-            //    ca.apartment AS ""CustomerAddressEntity_Apartment"",
-            //    ia.address_id AS ""OrderAddressEntity_Id"",
-            //    ia.postal_code AS ""OrderAddressEntity_PostalCode"",
-            //    ia.street AS ""OrderAddressEntity_Street"",
-            //    ia.apartment AS ""OrderAddressEntity_Apartment"",
-            //    ie.invoice_id AS ""InvoiceEntity_Id"",
-            //    ie.transaction_date AS ""InvoiceEntity_TransactionDate"",
-            //    ie.net_value AS ""InvoiceEntity_NetValue"",
-            //    ie.gross_value AS ""InvoiceEntity_GrossValue"",
-            //    ie.status AS ""InvoiceEntity_Status"",
-            //    ie.vat_rate AS ""InvoiceEntity_VatRate"",
-            //    op.order_product_id AS ""OrderProduct_Id"",
-            //    op.order_id AS ""OrderProduct_OrderEntityId"",
-            //    op.product_id AS ""OrderProduct_ProductEntityId"",
-            //    p.product_id AS ""ProductEntity_Id"",
-            //    p.manufacturer_id AS ""ProductEntity_ManufacturerEntityId"",
-            //    p.parcel_info_id AS ""ProductEntity_ParcelInfoEntityId"",
-            //    p.available_amount AS ""ProductEntity_AvailableAmount"",
-            //    p.price AS ""ProductEntity_Price"",
-            //    ma.manufacturer_id AS ""ManufacturerEntity_Id"",
-            //    ma.address_id AS ""ManufacturerEntity_AddressEntityId"",
-            //    ma.name AS ""ManufacturerEntity_Name"",
-            //    ma.email AS ""ManufacturerEntity_Email"",
-            //    ma.phone_number AS ""ManufacturerEntity_PhoneNumber"",
-            //    ma_address.address_id AS ""ManufacturerAddressEntity_Id"",
-            //    ma_address.postal_code AS ""ManufacturerAddressEntity_PostalCode"",
-            //    ma_address.street AS ""ManufacturerAddressEntity_Street"",
-            //    ma_address.apartment AS ""ManufacturerAddressEntity_Apartment"",
-            //    pa.parcel_info_id AS ""ParcelInfoEntity_Id"",
-            //    pa.weight AS ""ParcelInfoEntity_Weight"",
-            //    pa.height AS ""ParcelInfoEntity_Height"",
-            //    pa.length AS ""ParcelInfoEntity_Length"",
-            //    pa.width AS ""ParcelInfoEntity_Width""
-            //FROM
-            //    ""public"".""order"" AS o
-            //LEFT JOIN
-            //    ""public"".""customer"" AS ce ON o.customer_id = ce.customer_id
-            //LEFT JOIN
-            //    ""public"".""address"" AS ca ON ce.address_id = ca.address_id
-            //LEFT JOIN
-            //    ""public"".""address"" AS ia ON o.address_id = ia.address_id
-            //LEFT JOIN
-            //    ""public"".""invoice"" AS ie ON o.invoice_id = ie.invoice_id
-            //LEFT JOIN
-            //    ""public"".""order_product"" AS op ON o.order_id = op.order_id
-            //LEFT JOIN
-            //    ""public"".""product"" AS p ON op.product_id = p.product_id
-            //LEFT JOIN
-            //    ""public"".""manufacturer"" AS ma ON p.manufacturer_id = ma.manufacturer_id
-            //LEFT JOIN
-            //    ""public"".""address"" AS ma_address ON ma.address_id = ma_address.address_id
-            //LEFT JOIN
-            //    ""public"".""parcel_info"" AS pa ON p.parcel_info_id = pa.parcel_info_id
-            //WHERE
-            //    o.order_id = @orderId";
-
-            //            // Execute the raw SQL query to ensure it's working as expected
-            //            await _dbContext.Database.ExecuteSqlRawAsync(sql, new Npgsql.NpgsqlParameter("@orderId", id));
-
-            //            // Fetch the order data using FromSqlRaw
-            //            var order = await _dbContext.Orders.FromSqlRaw(sql, new Npgsql.NpgsqlParameter("@orderId", id)).ToListAsync();
-
             Guid orderId = id;
             List<OrderView> orderViews = await _dbContext.OrderViews
                 .FromSqlRaw("SELECT * FROM order_view WHERE \"order_id\" = @orderId",
@@ -359,9 +143,67 @@ internal class OrderRepository(AppDbContext dbContext) : IOrderRepository
         }
     }
 
-    public Task<Guid> UpdateOrderAsync(Order order)
+    public async Task<Guid> UpdateOrderStatusAsync(Guid orderId, string status)
     {
-        throw new NotImplementedException();
+        try
+        {
+            await using var transaction = await _dbContext.Database.BeginTransactionAsync();
+
+            try
+            {
+                string sqlUpdateStatus = @"
+                UPDATE public.""order""
+                SET ""status"" = @Status
+                WHERE ""order_id"" = @OrderId;";
+
+                await _dbContext.Database.ExecuteSqlRawAsync(sqlUpdateStatus,
+                    new Npgsql.NpgsqlParameter("@Status", status),
+                    new Npgsql.NpgsqlParameter("@OrderId", orderId)
+                );
+
+                await transaction.CommitAsync();
+                return orderId;
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                throw new DbOperationException("Update order status failed.", ex);
+            }
+        }
+        catch (Exception ex)
+        {
+            throw new DbOperationException("UpdateOrderStatus failed.", ex);
+        }
+    }
+
+    public async Task DeleteOrderAsync(Guid orderId)
+    {
+        try
+        {
+            await using var transaction = await _dbContext.Database.BeginTransactionAsync();
+
+            try
+            {
+                string sqlDeleteOrder = @"
+                DELETE FROM public.""order""
+                WHERE ""order_id"" = @OrderId;";
+
+                await _dbContext.Database.ExecuteSqlRawAsync(sqlDeleteOrder,
+                    new Npgsql.NpgsqlParameter("@OrderId", orderId)
+                );
+
+                await transaction.CommitAsync();
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                throw new DbOperationException("Delete order failed.", ex);
+            }
+        }
+        catch (Exception ex)
+        {
+            throw new DbOperationException("DeleteOrderAsync failed.", ex);
+        }
     }
 
     public IEnumerable<OrderEntity> GroupAndMapViews(List<OrderView> orderViews)
@@ -379,6 +221,7 @@ internal class OrderRepository(AppDbContext dbContext) : IOrderRepository
                         ProductEntity = new ProductEntity
                         {
                             ProductId = ov.ProductId,
+                            Name = ov.ProductName,
                             ManufacturerId = ov.ProductManufacturerId,
                             ParcelInfoId = ov.ProductParcelInfoId,
                             AvailableAmount = ov.ProductAvailableAmount,

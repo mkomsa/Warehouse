@@ -22,6 +22,7 @@
     public Guid OrderProductOrderId { get; set; }
     public Guid OrderProductProductId { get; set; }
     public Guid ProductId { get; set; }
+    public string ProductName { get; set; }
     public Guid ProductManufacturerId { get; set; }
     public Guid ProductParcelInfoId { get; set; }
     public int ProductAvailableAmount { get; set; }

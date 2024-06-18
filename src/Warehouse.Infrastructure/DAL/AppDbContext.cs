@@ -52,6 +52,7 @@ public class AppDbContext : DbContext
             entity.Property(e => e.OrderProductOrderId).HasColumnName("order_product_order_id");
             entity.Property(e => e.OrderProductProductId).HasColumnName("order_product_product_id");
             entity.Property(e => e.ProductId).HasColumnName("product_id");
+            entity.Property(e => e.ProductName).HasColumnName("product_name");
             entity.Property(e => e.ProductManufacturerId).HasColumnName("product_manufacturer_id");
             entity.Property(e => e.ProductParcelInfoId).HasColumnName("product_parcel_info_id");
             entity.Property(e => e.ProductAvailableAmount).HasColumnName("product_available_amount");
@@ -68,6 +69,7 @@ public class AppDbContext : DbContext
         {
             entity.HasNoKey();
             entity.Property(e => e.ProductId).HasColumnName("product_id");
+            entity.Property(e => e.Name).HasColumnName("name");
             entity.Property(e => e.Price).HasColumnName("price");
             entity.Property(e => e.AvailableAmount).HasColumnName("available_amount");
             entity.Property(e => e.ParcelInfoId).HasColumnName("parcel_info_id");

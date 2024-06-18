@@ -3,15 +3,16 @@ using Warehouse.Core.Orders.Repositories;
 
 namespace Warehouse.Core.Orders.Commands.Update;
 
-public class UpdateOrderCommand() : IRequest<Guid>
+public class UpdateOrderStatusCommand() : IRequest<Guid>
 {
-
+    public Guid Id { get; set; }
+    public string Status { get; set; } = String.Empty;
 }
 
-internal class UpdateOrderCommandHandler(IOrderRepository orderRepository) : IRequestHandler<UpdateOrderCommand, Guid>
+internal class UpdateOrderCommandHandler(IOrderRepository orderRepository) : IRequestHandler<UpdateOrderStatusCommand, Guid>
 {
-    public async Task<Guid> Handle(UpdateOrderCommand command, CancellationToken cancellationToken)
+    public async Task<Guid> Handle(UpdateOrderStatusCommand command, CancellationToken cancellationToken)
     {
-        return await orderRepository.UpdateOrderAsync(new());
+        return await orderRepository.UpdateOrderStatusAsync(command.Id, command.Status);
     }
 }

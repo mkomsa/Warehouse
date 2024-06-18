@@ -36,6 +36,7 @@ internal class ProductRepository(AppDbContext dbContext) : IProductRepository
         IEnumerable<ProductEntity> productEntities = productViews.Select(view => new ProductEntity()
         {
             ProductId = view.ProductId,
+            Name = view.Name,
             Price = view.Price,
             AvailableAmount = view.AvailableAmount,
             ParcelInfoEntity = new()

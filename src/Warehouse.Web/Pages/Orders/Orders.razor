@@ -21,7 +21,7 @@ else
             <th>Customer Name</th>
             <th>Email</th>
             <th>Total</th>
-            <th>Products</th>
+            <th>Details</th>
             <th>Transaction Date</th>
             <th>Status</th>
             <!-- Add more columns as needed -->
@@ -36,7 +36,7 @@ else
                 <td>@order.Customer.Email</td>
                     <td>@order.Products.Sum(p => p.Price).ToString("C")</td>
                 <td>
-                    <button class="btn btn-primary" @onclick="() => NavigateToOrderDetails(order.Id)">Click</button>
+                    <button class="btn btn-primary" @onclick="() => NavigateToOrderDetails(order.Id)">View</button>
                 </td>
                 <td>@order.Invoice.TransactionDate.ToShortDateString()</td>
                 <td>@order.Status</td>
