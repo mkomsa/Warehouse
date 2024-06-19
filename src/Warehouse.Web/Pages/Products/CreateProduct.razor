@@ -1,0 +1,106 @@
+﻿@page "/products/create"
+@using System.Text.Json
+@using System.Text.Json.Serialization
+@using Warehouse.Core.Manufacturers.Models
+@using Warehouse.Core.ParcelsInfos.Models
+@using Warehouse.Core.Products.Dtos
+@using Warehouse.Core.Products.Models
+@inject IHttpClientFactory ClientFactory
+@inject HttpClient http
+@inject NavigationManager Navigation
+
+<h3>Create Product</h3>
+
+<EditForm Model="newProduct" OnValidSubmit="HandleValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-3">
+        <label for="name" class="form-label">Name</label>
+        <InputText id="name" class="form-control" @bind-Value="newProduct.Name" />
+    </div>
+
+    <div class="mb-3">
+        <label for="manufacturer" class="form-label">Manufacturer</label>
+        <InputSelect id="manufacturer" class="form-control" @bind-Value="newProduct.ManufacturerId">
+            <option value="">Select Manufacturer</option>
+            @foreach (var manufacturer in manufacturers)
+            {
+                <option value="@manufacturer.Id">@manufacturer.Name</option>
+            }
+        </InputSelect>
+    </div>
+
+    <div class="mb-3">
+        <label for="parcelInfo" class="form-label">Parcel Info</label>
+        <InputSelect id="parcelInfo" class="form-control" @bind-Value="newProduct.ParcelInfoId">
+            <option value="">Select Parcel Info</option>
+            @foreach (var parcel in parcelInfos)
+            {
+                <option value="@parcel.Id">@($"{parcel.Length} x {parcel.Width} x {parcel.Height}")</option>
+            }
+        </InputSelect>
+    </div>
+
+    <div class="mb-3">
+        <label for="price" class="form-label">Price</label>
+        <InputNumber id="price" class="form-control" @bind-Value="newProduct.Price" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Create</button>
+    <button type="button" class="btn btn-secondary" @onclick="NavigateToProducts">Cancel</button>
+</EditForm>
+
+@code {
+    private ProductDto newProduct = new();
+    private List<ParcelInfo> parcelInfos = new();
+    private List<Manufacturer> manufacturers = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            HttpClient httpClient = ClientFactory.CreateClient();
+            httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
+
+            parcelInfos = await http.GetFromJsonAsync<List<ParcelInfo>>("https://localhost:7125/api/parcel-info")
+                         ?? new List<ParcelInfo>();
+            manufacturers = await http.GetFromJsonAsync<List<Manufacturer>>("https://localhost:7125/api/manufacturer")
+                           ?? new List<Manufacturer>();
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        try
+        {
+            HttpClient httpClient = ClientFactory.CreateClient();
+            httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
+
+            var response = await httpClient.PostAsJsonAsync("https://localhost:7125/api/product", newProduct);
+            if (response.IsSuccessStatusCode)
+            {
+                Navigation.NavigateTo("/products");
+            }
+            else
+            {
+                Console.WriteLine("Error creating product");
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+
+    private void NavigateToProducts()
+    {
+        Navigation.NavigateTo("/products");
+    }
+}

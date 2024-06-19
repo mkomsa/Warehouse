@@ -8,6 +8,8 @@
 
 <h3>Products</h3>
 
+<button class="btn btn-primary" @onclick="NavigateToAddProduct">Add Product</button>
+
 @if (products == null)
 {
     <p><em>Loading...</em></p>
@@ -26,7 +28,6 @@ else
             <th>Price</th>
             <th>Available Amount</th>
             <th>Parcel Dimensions (L x W x H)</th>
-            <th>Manufacturer</th>
         </tr>
         </thead>
         <tbody>
@@ -38,7 +39,6 @@ else
                 <td>@product.Price</td>
                 <td>@product.AvailableAmount</td>
                 <td>@product.ParcelInfo.Length x @product.ParcelInfo.Width x @product.ParcelInfo.Height</td>
-                <td>@product.Manufacturer.Name</td>
             </tr>
         }
         </tbody>
@@ -56,15 +56,17 @@ else
             httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
 
             products = await http.GetFromJsonAsync<List<Product>>("https://localhost:7125/api/product")
-                       ?? new List<Product>()
-                       {
-                           new()
-                       };
+                       ?? new List<Product>();
         }
         catch (Exception e)
         {
             Console.WriteLine(e);
             throw;
         }
+    }
+
+    private void NavigateToAddProduct()
+    {
+        Navigation.NavigateTo("/products/create");
     }
 }

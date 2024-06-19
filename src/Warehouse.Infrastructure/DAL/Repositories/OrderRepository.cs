@@ -50,6 +50,7 @@ internal class OrderRepository(AppDbContext dbContext) : IOrderRepository
                     TotalSpent = g.Sum(o => o.TotalSpent)
                 }
             )
+            .OrderByDescending(co => co.TotalSpent)
             .ToList();
 
         return aggregatedOrders;

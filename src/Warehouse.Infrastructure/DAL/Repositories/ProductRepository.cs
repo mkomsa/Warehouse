@@ -1,4 +1,5 @@
-﻿using Warehouse.Core.Products.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using Warehouse.Core.Products.Models;
 using Warehouse.Core.Products.Repositories;
 using Warehouse.Infrastructure.DAL.Entities;
 using Warehouse.Infrastructure.DAL.Exceptions;
@@ -29,6 +30,22 @@ internal class ProductRepository(AppDbContext dbContext) : IProductRepository
             Console.WriteLine(ex);
             throw new DbOperationException("Get products failed.", ex);
         }
+    }
+
+    public async Task<Guid> AddProductAsync(Product product)
+    {
+        try
+        {
+            await dbContext.Database.ExecuteSqlInterpolatedAsync($@"
+            CALL add_product({product.Id},{product.Name}, {product.ParcelInfo.Id}, {product.Manufacturer.Id}, {product.Price});
+        ");
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex);
+            throw new DbOperationException("Create product failed.", ex);
+        }
+        return product.Id;
     }
 
     private IEnumerable<ProductEntity> MapViews(List<ProductView> productViews)
