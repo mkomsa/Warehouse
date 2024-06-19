@@ -8,49 +8,88 @@
 
 <h3>Orders</h3>
 
-@if (orders == null)
+
+@if (isSalesView)
 {
-    <p><em>Loading...</em></p>
+    @if (customerOrders == null)
+    {
+        <p><em>Loading sales data...</em></p>
+    }
+    else
+    {
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Customer Name</th>
+                    <th>Total Spent</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var customerOrder in customerOrders)
+                {
+                    <tr>
+                        <td>@customerOrder.Name</td>
+                        <td>@customerOrder.TotalSpent.ToString("C")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
 }
 else
 {
-    <table class="table table-striped">
-        <thead>
-        <tr>
-            <th>Order ID</th>
-            <th>Customer Name</th>
-            <th>Email</th>
-            <th>Total</th>
-            <th>Details</th>
-            <th>Transaction Date</th>
-            <th>Status</th>
-            <!-- Add more columns as needed -->
-        </tr>
-        </thead>
-        <tbody>
-        @foreach (var order in orders)
-        {
-            <tr>
-                <td>@order.Id</td>
-                <td>@order.Customer.Name</td>
-                <td>@order.Customer.Email</td>
-                    <td>@order.Products.Sum(p => p.Price).ToString("C")</td>
-                <td>
-                    <button class="btn btn-primary" @onclick="() => NavigateToOrderDetails(order.Id)">View</button>
-                </td>
-                <td>@order.Invoice.TransactionDate.ToShortDateString()</td>
-                <td>@order.Status</td>
-                <!-- Add more columns as needed -->
-            </tr>
-        }
-        </tbody>
-    </table>
+    @if (orders == null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else
+    {
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Order ID</th>
+                    <th>Customer Name</th>
+                    <th>Email</th>
+                    <th>Total</th>
+                    <th>Details</th>
+                    <th>Transaction Date</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var order in orders)
+                {
+                    <tr>
+                        <td>@order.Id</td>
+                        <td>@order.Customer.Name</td>
+                        <td>@order.Customer.Email</td>
+                        <td>@order.Products.Sum(p => p.Price).ToString("C")</td>
+                        <td>
+                            <button class="btn btn-primary" @onclick="() => NavigateToOrderDetails(order.Id)">View</button>
+                        </td>
+                        <td>@order.Invoice.TransactionDate.ToShortDateString()</td>
+                        <td>@order.Status</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
 }
 
+<button class="btn btn-secondary" @onclick="ToggleView">@viewButtonText</button>
+
 @code {
-    List<Order> orders = new();
+    private List<Order> orders = new();
+    private List<CustomerOrders> customerOrders = new();
+    private bool isSalesView = false;
+    private string viewButtonText = "Sales View";
 
     protected override async Task OnInitializedAsync()
+    {
+        await LoadOrders();
+    }
+
+    private async Task LoadOrders()
     {
         try
         {
@@ -58,15 +97,40 @@ else
             httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
 
             orders = await http.GetFromJsonAsync<List<Order>>("https://localhost:7125/api/order")
-                ?? new List<Order>()
-                {
-                    new()
-                };
+                ?? new List<Order>() { new() };
         }
         catch (Exception e)
         {
             Console.WriteLine(e);
             throw;
+        }
+    }
+
+    private async Task LoadCustomerOrders()
+    {
+        try
+        {
+            HttpClient httpClient = ClientFactory.CreateClient();
+            httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
+
+            customerOrders = await http.GetFromJsonAsync<List<CustomerOrders>>("https://localhost:7125/api/order/by-customer")
+                ?? new List<CustomerOrders>() { new() };
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
+    }
+
+    private void ToggleView()
+    {
+        isSalesView = !isSalesView;
+        viewButtonText = isSalesView ? "Orders View" : "Sales View";
+
+        if (isSalesView && customerOrders.Count == 0)
+        {
+            _ = LoadCustomerOrders();
         }
     }
 
