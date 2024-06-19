@@ -1,6 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Reflection;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
-using System.Reflection;
 using Warehouse.Infrastructure.DAL;
 
 namespace Warehouse.Infrastructure.Seeder;

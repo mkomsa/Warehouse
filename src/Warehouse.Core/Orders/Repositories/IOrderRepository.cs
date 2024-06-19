@@ -5,6 +5,7 @@ namespace Warehouse.Core.Orders.Repositories;
 public interface IOrderRepository
 {
     Task<IReadOnlyCollection<Order>> GetOrdersAsync();
+    Task<IReadOnlyCollection<CustomerOrders>> GetCustomerOrdersAsync();
     Task<Order> GetOrderByIdAsync(Guid id);
     Task<Guid> CreateOrderAsync(Order order);
     Task<Guid> UpdateOrderStatusAsync(Guid orderId, string status);

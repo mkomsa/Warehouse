@@ -19,14 +19,14 @@ BEGIN
             random_quantity := p_available_amount;
         END IF;
         
-        -- Insert into product
+        -- insert into product
         INSERT INTO product (product_id, parcel_info_id, manufacturer_id, price, available_amount)
         VALUES (p_product_id, p_parcel_info_id, p_manufacturer_id, p_price, random_quantity);
         
-        --Commit
+        --commit
         COMMIT;
     EXCEPTION
-        -- Rollback
+        --rollback
         WHEN OTHERS THEN
             ROLLBACK;
             RAISE;

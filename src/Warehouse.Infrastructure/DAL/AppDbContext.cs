@@ -1,5 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.Reflection;
+﻿using System.Reflection;
+using Microsoft.EntityFrameworkCore;
 using Warehouse.Infrastructure.DAL.Entities;
 using Warehouse.Infrastructure.DAL.Views;
 
@@ -21,6 +21,7 @@ public class AppDbContext : DbContext
     public DbSet<OrderProductEntity> OrdersProducts { get; set; }
     public DbSet<OrderView> OrderViews { get; set; }
     public DbSet<ProductView> ProductViews { get; set; }
+    public DbSet<CustomerOrdersView> CustomerOrdersViews { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -87,5 +88,15 @@ public class AppDbContext : DbContext
             entity.Property(e => e.ManufacturerApartment).HasColumnName("manufacturer_apartment");
             entity.ToView("product_view");
         });
+
+        modelBuilder.Entity<CustomerOrdersView>(entity =>
+        {
+            entity.HasNoKey(); // The view doesn't have a primary key
+            entity.Property(e => e.CustomerId).HasColumnName("customer_id");
+            entity.Property(e => e.Name).HasColumnName("name");
+            entity.Property(e => e.TotalSpent).HasColumnName("total_spent");
+            entity.ToView("customer_orders_view");
+        });
+
     }
 }

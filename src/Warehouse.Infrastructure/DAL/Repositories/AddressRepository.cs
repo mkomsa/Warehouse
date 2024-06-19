@@ -20,9 +20,9 @@ internal class AddressRepository(AppDbContext dbContext) : IAddressRepository
 
             if (!addressEntities.Any())
             {
-                return new List<Address>()
+                return new List<Address>
                 {
-                    new Address()
+                    new()
                 };
             }
 
