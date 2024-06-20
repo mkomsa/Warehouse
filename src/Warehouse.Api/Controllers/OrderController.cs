@@ -10,7 +10,7 @@ using Warehouse.Core.Orders.Queries.GetOrders;
 namespace Warehouse.Api.Controllers;
 
 [ApiController]
-[Route("api/order")]
+[Route("api/orders")]
 public class OrderController(IMediator mediator) : ControllerBase
 {
     private readonly IMediator _mediator = mediator;

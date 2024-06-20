@@ -146,7 +146,7 @@
     {
         try
         {
-            products = await HttpClient.GetFromJsonAsync<List<Product>>("https://localhost:7125/api/product");
+            products = await HttpClient.GetFromJsonAsync<List<Product>>("https://localhost:7125/api/products");
         }
         catch (Exception ex)
         {
@@ -173,7 +173,7 @@
             order.Customer.Address.PostalCode = order.Address.PostalCode;
             order.Status = "created";
 
-            HttpResponseMessage response = await HttpClient.PostAsJsonAsync("https://localhost:7125/api/order", order);
+            HttpResponseMessage response = await HttpClient.PostAsJsonAsync("https://localhost:7125/api/orders", order);
 
             // Check if request was successful
             if (response.IsSuccessStatusCode)

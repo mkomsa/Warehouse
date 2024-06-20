@@ -146,7 +146,7 @@ else
             HttpClient httpClient = ClientFactory.CreateClient();
             httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
 
-            order = await httpClient.GetFromJsonAsync<Order>($"https://localhost:7125/api/order/{OrderId}");
+            order = await httpClient.GetFromJsonAsync<Order>($"https://localhost:7125/api/orders/{OrderId}");
         }
         catch (Exception ex)
         {
@@ -180,8 +180,13 @@ else
             string jsonContent = JsonSerializer.Serialize(selectedStatus);
             HttpContent content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
 
-            var response = await httpClient.PatchAsync($"https://localhost:7125/api/order/{OrderId}/change-status", content);
+            var response = await httpClient.PatchAsync($"https://localhost:7125/api/orders/{OrderId}/change-status", content);
             showStatusModal = false;
+
+            if (response.IsSuccessStatusCode)
+            {
+                Navigation.NavigateTo("/orders");
+            }
         }
         catch(Exception ex)
         {
@@ -204,7 +209,7 @@ else
         try
         {
             HttpClient httpClient = ClientFactory.CreateClient();
-            HttpResponseMessage response = await httpClient.DeleteAsync($"https://localhost:7125/api/order/{OrderId}");
+            HttpResponseMessage response = await httpClient.DeleteAsync($"https://localhost:7125/api/orders/{OrderId}");
 
             if (response.IsSuccessStatusCode)
             {

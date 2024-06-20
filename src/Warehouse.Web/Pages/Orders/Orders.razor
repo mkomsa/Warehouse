@@ -96,7 +96,7 @@ else
             HttpClient httpClient = ClientFactory.CreateClient();
             httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
 
-            orders = await http.GetFromJsonAsync<List<Order>>("https://localhost:7125/api/order")
+            orders = await http.GetFromJsonAsync<List<Order>>("https://localhost:7125/api/orders")
                 ?? new List<Order>() { new() };
         }
         catch (Exception e)
@@ -113,7 +113,7 @@ else
             HttpClient httpClient = ClientFactory.CreateClient();
             httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
 
-            customerOrders = await http.GetFromJsonAsync<List<CustomerOrders>>("https://localhost:7125/api/order/by-customer")
+            customerOrders = await http.GetFromJsonAsync<List<CustomerOrders>>("https://localhost:7125/api/orders/by-customer")
                 ?? new List<CustomerOrders>() { new() };
         }
         catch (Exception e)
