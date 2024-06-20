@@ -14,6 +14,32 @@
     <p class="text-danger">@errorMessage</p>
 }
 
+<style>
+        .short-input {
+            max-width: 300px;
+        }
+
+        .snackbar {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #333;
+            color: #fff;
+            padding: 15px;
+            border-radius: 5px;
+            z-index: 1000;
+        }
+    </style>
+
+<!-- Snackbar component -->
+@if (showSnackbar)
+{
+    <div class="snackbar">
+        Product @addedProductName added to order.
+    </div>
+}
+
 <form @onsubmit="Create">
     <div class="container-fluid">
         <div class="row">
@@ -80,54 +106,77 @@
         </div>
     </div>
 
-    <style>
-        .short-input {
-            max-width: 300px;
-        }
-    </style>
+    <h3 class="display-6 mt-4">Products</h3>
 
-    <div class="album py-3 px-1 bg-info-subtle" style="border-radius: 10px;">
-        <h3 class="display-6 mb-4">Products</h3>
-        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 row-cols-xxl-6">
-            @foreach (var product in products)
-            {
-                Random rand = new Random();
-                int id = rand.Next(1, 200);
-
-                string imageUrl = $"https://picsum.photos/id/{id}/75/75";
-                <div class="col mb-3">
-                    <div class="card h-100">
-                        <img src="@imageUrl" class="card-img-top" alt="@product.Price" style="object-fit:fill">
-                        <div class="card-body d-flex flex-column">
-                            <h6 class="card-title">@product.Name</h6>
-                            <p class="card-text">$ @product.Price.ToString("0.0")</p>
-                            <button type="button" class="btn btn-primary btn-sm mt-auto" @onclick="() => AddToOrder(product)">Add to Order</button>
+    <div class="row align-items-start mb-5">
+        <!-- Products Column -->
+        <div class="col-md-8 album py-3 px-3 bg-opacity-10 bg-info" style="border-radius: 10px;">
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 row-cols-xxl-6">
+                @foreach (var product in products)
+                {
+                    <div class="col mb-3">
+                        <div class="card h-100">
+                            <img src="@productImageUrls[product]" class="card-img-top" alt="@product.Price" style="object-fit: fill;">
+                            <div class="card-body d-flex flex-column">
+                                <h6 class="card-title">@product.Name</h6>
+                                <p class="card-text">$ @product.Price.ToString("0.0")</p>
+                                <button type="button" class="btn btn-primary btn-sm mt-auto" @onclick="() => AddToOrder(product)">Add to Order</button>
+                            </div>
                         </div>
                     </div>
+                }
+            </div>
+        </div>
+
+        <!-- Shopping Cart Column -->
+        <div class="col-md-4 mt-md-0 mt-5">
+            <div class="card">
+                <div class="card-body" style="max-height: 400px; overflow-y: auto;">
+                    <h4 class="card-title mb-4">Cart:</h4>
+                    @foreach (var product in order.Products)
+                    {
+                        <div class="cart-item mb-3 pb-3 border-bottom">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div>
+                                    <span>@product.Name</span>
+                                    <span class="price">$ @product.Price.ToString("0.0")</span>
+                                </div>
+                                <button type="button" class="btn btn-sm btn-outline-danger remove-btn" @onclick="() => RemoveFromOrder(product)">Remove</button>
+                            </div>
+                        </div>
+                    }
+                    @if (order.Products.Count == 0)
+                    {
+                        <p class="text-muted mt-3">Your cart is empty.</p>
+                    }
                 </div>
-            }
+            </div>
+
+            <button type="submit" class="btn btn-primary mt-4">Submit</button>
         </div>
     </div>
 
-    <button type="submit" class="btn btn-primary">Submit</button>
 </form>
 
 @code {
 
+    private Dictionary<Product, string> productImageUrls = new();
     private Order order = new()
-    {
-        Id = Guid.NewGuid(),
-        Address = new Address(),
-        Customer = new Customer()
         {
-            Address = new Address()
-        },
-        Invoice = new Invoice(),
-        Products = new List<Product>()
-    };
+            Id = Guid.NewGuid(),
+            Address = new Address(),
+            Customer = new Customer()
+            {
+                Address = new Address()
+            },
+            Invoice = new Invoice(),
+            Products = new List<Product>()
+        };
 
     private List<Product> products = new();
     private string errorMessage;
+    private bool showSnackbar = false;
+    private string addedProductName;
 
     private string FormattedGrossValue
     {
@@ -141,12 +190,20 @@
         set => order.Invoice.NetValue = double.TryParse(value, out var result) ? result : order.Invoice.NetValue;
     }
 
-
     protected override async Task OnInitializedAsync()
     {
         try
         {
             products = await HttpClient.GetFromJsonAsync<List<Product>>("https://localhost:7125/api/products");
+
+            Random rand = new Random();
+            foreach (var product in products)
+            {
+                int id = rand.Next(1, 200);
+                string imageUrl = $"https://picsum.photos/id/{id}/75/75";
+                productImageUrls[product] = imageUrl;
+            }
+
         }
         catch (Exception ex)
         {
@@ -154,10 +211,25 @@
         }
     }
 
-    private void AddToOrder(Product product)
+    private async void AddToOrder(Product product)
     {
         order.Products.Add(product);
         order.Invoice.GrossValue += product.Price;
+
+        // Show snackbar with added product name
+        addedProductName = product.Name;
+        showSnackbar = true;
+        StateHasChanged(); // Ensure UI updates immediately
+
+        await Task.Delay(1000); // Delay for 1 second
+        showSnackbar = false;
+        StateHasChanged(); // Ensure UI updates immediately
+    }
+
+    private void RemoveFromOrder(Product product)
+    {
+        order.Products.Remove(product);
+        order.Invoice.GrossValue -= product.Price;
     }
 
     private async Task Create()
