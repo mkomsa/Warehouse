@@ -5,7 +5,11 @@
 @inject IHttpClientFactory ClientFactory
 @inject HttpClient http
 @inject NavigationManager Navigation
+@inject IJSRuntime JS
 
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKVB+qYvuJ5Fw5Rk+Q9y1hU2E4p5U7bS1u20v9U6R+7lQ/P+9Hu8s1D9Qp3zQnD5mdD6akA==" crossorigin="anonymous" />
+</head>
 <h3>Products</h3>
 
 <button class="btn btn-primary" @onclick="NavigateToAddProduct">Add Product</button>
@@ -13,10 +17,6 @@
 @if (products == null)
 {
     <p><em>Loading...</em></p>
-}
-else if (!products.Any())
-{
-    <p>No products available.</p>
 }
 else
 {
@@ -28,6 +28,7 @@ else
             <th>Price</th>
             <th>Available Amount</th>
             <th>Parcel Dimensions (L x W x H)</th>
+            <th>Actions</th>
         </tr>
         </thead>
         <tbody>
@@ -39,14 +40,56 @@ else
                 <td>@product.Price</td>
                 <td>@product.AvailableAmount</td>
                 <td>@product.ParcelInfo.Length x @product.ParcelInfo.Width x @product.ParcelInfo.Height</td>
+                <td>
+                    <button class="btn btn-sm btn-warning" @onclick="() => EditProduct(product.Id)">
+                        <i>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
+                                <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325"/>
+                            </svg>
+                        </i>
+                    </button>
+                        <button class="btn btn-sm btn-danger" @onclick="() => ShowDeleteConfirmation(product.Id)">
+                        <i>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3" viewBox="0 0 16 16">
+                                <path d="M6.5 1h3a.5.5 0 0 1 .5.5v1H6v-1a.5.5 0 0 1 .5-.5M11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3A1.5 1.5 0 0 0 5 1.5v1H1.5a.5.5 0 0 0 0 1h.538l.853 10.66A2 2 0 0 0 4.885 16h6.23a2 2 0 0 0 1.994-1.84l.853-10.66h.538a.5.5 0 0 0 0-1zm1.958 1-.846 10.58a1 1 0 0 1-.997.92h-6.23a1 1 0 0 1-.997-.92L3.042 3.5zm-7.487 1a.5.5 0 0 1 .528.47l.5 8.5a.5.5 0 0 1-.998.06L5 5.03a.5.5 0 0 1 .47-.53Zm5.058 0a.5.5 0 0 1 .47.53l-.5 8.5a.5.5 0 1 1-.998-.06l.5-8.5a.5.5 0 0 1 .528-.47M8 4.5a.5.5 0 0 1 .5.5v8.5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5"/>
+                            </svg>
+                        </i>
+                    </button>
+                </td>
             </tr>
         }
         </tbody>
     </table>
+
+    @if (showConfirmationModal)
+    {
+        <div class="modal-backdrop fade show"></div>
+        <div class="modal fade show" tabindex="-1" style="display: block;">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Confirmation</h5>
+                        <button type="button" class="close" @onclick="HideDeleteConfirmation">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Are you sure you want to delete this order?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" @onclick="HideDeleteConfirmation">Cancel</button>
+                        <button type="button" class="btn btn-danger" @onclick="DeleteProduct">Delete</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
 }
 
 @code {
     List<Product> products = new();
+    private bool showConfirmationModal = false;
+    private Guid productIdToDelete;
 
     protected override async Task OnInitializedAsync()
     {
@@ -55,7 +98,7 @@ else
             HttpClient httpClient = ClientFactory.CreateClient();
             httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
 
-            products = await http.GetFromJsonAsync<List<Product>>("https://localhost:7125/api/product")
+            products = await http.GetFromJsonAsync<List<Product>>("https://localhost:7125/api/products")
                        ?? new List<Product>();
         }
         catch (Exception e)
@@ -68,5 +111,48 @@ else
     private void NavigateToAddProduct()
     {
         Navigation.NavigateTo("/products/create");
+    }
+
+    private void EditProduct(Guid productId)
+    {
+        Navigation.NavigateTo($"/products/edit/{productId}");
+    }
+
+    private void ShowDeleteConfirmation(Guid productId)
+    {
+        productIdToDelete = productId;
+        showConfirmationModal = true;
+    }
+
+    private void HideDeleteConfirmation()
+    {
+        showConfirmationModal = false;
+        productIdToDelete = Guid.Empty;
+    }
+
+    private async Task DeleteProduct()
+    {
+        try
+        {
+            HttpClient httpClient = ClientFactory.CreateClient();
+            httpClient.DefaultRequestHeaders.Add("Accept", "application/json");
+
+            var response = await httpClient.DeleteAsync($"https://localhost:7125/api/products/{productIdToDelete}");
+            if (response.IsSuccessStatusCode)
+            {
+                products = products.Where(p => p.Id != productIdToDelete).ToList();
+                HideDeleteConfirmation();
+            }
+            else
+            {
+    // Handle error response
+                Console.WriteLine("Failed to delete product.");
+            }
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
 }
