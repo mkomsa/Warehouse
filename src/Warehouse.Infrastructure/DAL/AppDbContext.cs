@@ -22,6 +22,8 @@ public class AppDbContext : DbContext
     public DbSet<OrderView> OrderViews { get; set; }
     public DbSet<ProductView> ProductViews { get; set; }
     public DbSet<CustomerOrdersView> CustomerOrdersViews { get; set; }
+    public DbSet<ParcelInfoView> ParcelInfoViews { get; set; }
+    public DbSet<ManufacturerView> ManufacturerViews { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -97,6 +99,31 @@ public class AppDbContext : DbContext
             entity.Property(e => e.TotalSpent).HasColumnName("total_spent");
             entity.ToView("customer_orders_view");
         });
+
+        // Map ParcelInfoView
+        modelBuilder.Entity<ParcelInfoView>(entity =>
+        {
+            entity.Property(e => e.ParcelInfoId).HasColumnName("parcel_info_id");
+            entity.Property(e => e.Length).HasColumnName("length");
+            entity.Property(e => e.Width).HasColumnName("width");
+            entity.Property(e => e.Height).HasColumnName("height");
+            entity.Property(e => e.Weight).HasColumnName("weight");
+        });
+        modelBuilder.Entity<ParcelInfoView>().HasNoKey().ToView("parcel_info_view");
+        // Map ManufacturerView
+
+        modelBuilder.Entity<ManufacturerView>(entity =>
+        {
+            entity.Property(e => e.ManufacturerId).HasColumnName("manufacturer_id");
+            entity.Property(e => e.Name).HasColumnName("name");
+            entity.Property(e => e.Email).HasColumnName("email");
+            entity.Property(e => e.PhoneNumber).HasColumnName("phone_number");
+            entity.Property(e => e.AddressId).HasColumnName("address_id");
+            entity.Property(e => e.PostalCode).HasColumnName("postal_code");
+            entity.Property(e => e.Street).HasColumnName("street");
+            entity.Property(e => e.Apartment).HasColumnName("apartment");
+        });
+        modelBuilder.Entity<ManufacturerView>().HasNoKey().ToView("manufacturer_view");
 
     }
 }
