@@ -263,3 +263,129 @@ CALL update_product(
     32,
     12321
 );
+
+CREATE TABLE IF NOT EXISTS "__EFMigrationsHistory" (
+    "MigrationId" character varying(150) NOT NULL,
+    "ProductVersion" character varying(32) NOT NULL,
+    CONSTRAINT "PK___EFMigrationsHistory" PRIMARY KEY ("MigrationId")
+);
+
+START TRANSACTION;
+
+CREATE TABLE address (
+    address_id uuid NOT NULL,
+    postal_code character varying(20) NOT NULL,
+    street character varying(255) NOT NULL,
+    apartment character varying(50) NOT NULL,
+    CONSTRAINT "PK_address" PRIMARY KEY (address_id)
+);
+
+CREATE TABLE invoice (
+    invoice_id uuid NOT NULL,
+    transaction_date timestamptz NOT NULL,
+    net_value double precision GENERATED ALWAYS AS (gross_value * ((100 - vat_rate)/100)) STORED NOT NULL,
+    gross_value double precision NOT NULL,
+    status character varying(16) NOT NULL,
+    vat_rate double precision NOT NULL,
+    CONSTRAINT "PK_invoice" PRIMARY KEY (invoice_id)
+);
+
+CREATE TABLE parcel_info (
+    parcel_info_id uuid NOT NULL,
+    length double precision NOT NULL,
+    width double precision NOT NULL,
+    height double precision NOT NULL,
+    weight double precision NOT NULL,
+    CONSTRAINT "PK_parcel_info" PRIMARY KEY (parcel_info_id)
+);
+
+CREATE TABLE customer (
+    customer_id uuid NOT NULL,
+    address_id uuid NOT NULL,
+    name text NOT NULL,
+    full_name character varying(255) NOT NULL,
+    email character varying(320) NOT NULL,
+    phone_number character varying(16) NOT NULL,
+    CONSTRAINT "PK_customer" PRIMARY KEY (customer_id),
+    CONSTRAINT "FK_customer_address_address_id" FOREIGN KEY (address_id) REFERENCES address (address_id) ON DELETE CASCADE
+);
+
+CREATE TABLE manufacturer (
+    manufacturer_id uuid NOT NULL,
+    address_id uuid NOT NULL,
+    name character varying(255) NOT NULL,
+    email character varying(320) NOT NULL,
+    phone_number character varying(16) NOT NULL,
+    CONSTRAINT "PK_manufacturer" PRIMARY KEY (manufacturer_id),
+    CONSTRAINT "FK_manufacturer_address_address_id" FOREIGN KEY (address_id) REFERENCES address (address_id) ON DELETE CASCADE
+);
+
+CREATE TABLE "order" (
+    order_id uuid NOT NULL,
+    customer_id uuid NOT NULL,
+    address_id uuid NOT NULL,
+    invoice_id uuid NOT NULL,
+    status text NOT NULL DEFAULT 'created',
+    CONSTRAINT "PK_order" PRIMARY KEY (order_id),
+    CONSTRAINT "FK_order_address_address_id" FOREIGN KEY (address_id) REFERENCES address (address_id) ON DELETE CASCADE,
+    CONSTRAINT "FK_order_customer_customer_id" FOREIGN KEY (customer_id) REFERENCES customer (customer_id) ON DELETE CASCADE,
+    CONSTRAINT "FK_order_invoice_invoice_id" FOREIGN KEY (invoice_id) REFERENCES invoice (invoice_id) ON DELETE CASCADE
+);
+
+CREATE TABLE product (
+    product_id uuid NOT NULL,
+    parcel_info_id uuid NOT NULL,
+    manufacturer_id uuid NOT NULL,
+    price double precision NOT NULL,
+    available_amount integer NOT NULL,
+    CONSTRAINT "PK_product" PRIMARY KEY (product_id),
+    CONSTRAINT "FK_product_manufacturer_manufacturer_id" FOREIGN KEY (manufacturer_id) REFERENCES manufacturer (manufacturer_id) ON DELETE CASCADE,
+    CONSTRAINT "FK_product_parcel_info_parcel_info_id" FOREIGN KEY (parcel_info_id) REFERENCES parcel_info (parcel_info_id) ON DELETE CASCADE
+);
+
+CREATE TABLE order_product (
+    order_id uuid NOT NULL,
+    product_id uuid NOT NULL,
+    order_product_id uuid NOT NULL,
+    CONSTRAINT "PK_order_product" PRIMARY KEY (order_id, product_id),
+    CONSTRAINT "FK_order_product_order_order_id" FOREIGN KEY (order_id) REFERENCES "order" (order_id) ON DELETE CASCADE,
+    CONSTRAINT "FK_order_product_product_product_id" FOREIGN KEY (product_id) REFERENCES product (product_id) ON DELETE CASCADE
+);
+
+CREATE INDEX "IX_customer_address_id" ON customer (address_id);
+
+CREATE INDEX "IX_manufacturer_address_id" ON manufacturer (address_id);
+
+CREATE INDEX "IX_order_address_id" ON "order" (address_id);
+
+CREATE INDEX "IX_order_customer_id" ON "order" (customer_id);
+
+CREATE UNIQUE INDEX "IX_order_invoice_id" ON "order" (invoice_id);
+
+CREATE INDEX "IX_order_product_product_id" ON order_product (product_id);
+
+CREATE INDEX "IX_product_manufacturer_id" ON product (manufacturer_id);
+
+CREATE INDEX "IX_product_parcel_info_id" ON product (parcel_info_id);
+
+INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
+VALUES ('20240617125257_init', '8.0.4');
+
+COMMIT;
+
+START TRANSACTION;
+
+ALTER TABLE product ADD name text NOT NULL DEFAULT '';
+
+INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
+VALUES ('20240618085746_product-name', '8.0.4');
+
+COMMIT;
+
+START TRANSACTION;
+
+INSERT INTO "__EFMigrationsHistory" ("MigrationId", "ProductVersion")
+VALUES ('20240621133322_update', '8.0.4');
+
+COMMIT;
+
